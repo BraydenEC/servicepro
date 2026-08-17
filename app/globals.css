@@ -1,26 +1,55 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/*
+  ServicePro design tokens.
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  Tailwind v4 is CSS-first — there is no tailwind.config.ts in this project.
+  Anything declared in @theme becomes a real utility, so --color-surface
+  generates bg-surface / text-surface / border-surface automatically.
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  Semantic names (surface, ink, hairline) rather than raw palette names
+  (slate-900) so the intent is readable at the call site and a future
+  re-theme happens in one place.
+
+  Dark-only by design: the scope cut excludes a theme toggle, so there is
+  no prefers-color-scheme block. One palette, always.
+*/
+@theme {
+  /* Surfaces — deep slate, layered from back to front */
+  --color-app: #020617; /* page canvas */
+  --color-surface: #0f172a; /* sidebar, cards, table container */
+  --color-raised: #1e293b; /* table header, row hover */
+  --color-hairline: #1e293b; /* 1px borders */
+
+  /* Ink */
+  --color-ink: #f1f5f9; /* headings, metric values */
+  --color-ink-muted: #94a3b8; /* labels, client names */
+  --color-ink-faint: #64748b; /* meta text */
+
+  /* Accent — indigo, used sparingly for active state only */
+  --color-accent: #6366f1;
+  --color-accent-soft: #818cf8;
+
+  /* Status colors — one per project state */
+  --color-status-progress: #818cf8; /* indigo  — In Progress */
+  --color-status-review: #fbbf24; /* amber   — Awaiting Review */
+  --color-status-sent: #38bdf8; /* sky     — Invoice Sent */
+  --color-status-overdue: #fb7185; /* rose    — Overdue */
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-app);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+/*
+  Financial figures are compared down a column, so digits must occupy equal
+  width. Without this, "$4,837.50" and "$1,100.00" visually misalign.
+*/
+.numeric {
+  font-variant-numeric: tabular-nums;
 }

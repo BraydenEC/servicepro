@@ -1,7 +1,11 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // Pin the workspace root. A stray package-lock.json in the home directory
+  // otherwise makes Turbopack guess wrong and emit a warning on every start.
+  turbopack: {
+    root: __dirname,
+  },
 };
 
 export default nextConfig;

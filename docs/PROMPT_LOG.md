@@ -2,7 +2,7 @@
 
 **Agent used:** Claude Code (Opus 5), running in VS Code
 **Requirement:** minimum 5 prompts
-**Status:** 4 logged / 5 minimum
+**Status:** ✅ 5 logged / 5 minimum
 
 This is a live record of the actual prompts sent to the coding agent, in order,
 with what each one produced and what had to be corrected. Prompts are recorded
@@ -80,7 +80,39 @@ here as the original intent statement.
 
 ---
 
-## Prompt 5 — *(pending — Phase 2/3 UI implementation)*
+## Prompt 5 — Continue building, document the session, flag human action
+**Sent:** Aug 17, 2026
+
+> please continue to work on the code. Please make an additional document of our conversation. Additionally, please notify me of when I have to take action such as set up the supabase, github, commits, deployments, etc
+
+**Outcome:** Phases 2 and 3 completed — design tokens, sidebar, summary cards,
+projects table, status badges, mock dataset, formatting layer. Produced
+`CONVERSATION_LOG.md` and `ACTION_ITEMS.md`, and prepared `supabase/schema.sql`
+ahead of Phase 5.
+
+**Correction caught during this phase:** the build output reported the route as
+`○ (Static)` — prerendered, which freezes `new Date()` into the HTML at build
+time. The relative deadline column ("in 3 days") would have counted from the
+last deployment and drifted further wrong every day. Fixed with
+`export const dynamic = "force-dynamic"`; the build now reports `ƒ /`.
+
+**Second correction:** the IDE flagged `bg-gradient-to-b` as non-canonical —
+Tailwind v4 renamed it `bg-linear-to-b`. Precisely the version drift that Next
+16's bundled `AGENTS.md` warns about.
+
+---
+
+## Notes on prompt strategy
+
+The most valuable prompt in this project was **Prompt 1's constraint**, not any
+of its instructions. Blocking code generation until a plan existed forced a
+cross-reading of four source documents that surfaced seven contradictions —
+including two (the build-time crash on missing env vars, and the static-prerender
+date freeze) that would have shipped as live defects.
+
+The second most valuable were **Prompts 2 and 3**: validating the plan against
+the assignment and rubric *before* building, which changed the build order
+rather than requiring rework afterward.
 
 ---
 

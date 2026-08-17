@@ -1,14 +1,22 @@
 # 🤝 ServicePro — Session Handoff
 
-**Last updated:** Aug 17, 2026 · end of Phase 1
+**Last updated:** Aug 17, 2026 · end of Phase 3
 **Project root:** `/Users/braydencredeur/Antigravity/Website/Dev/servicepro`
 **Master plan:** `/Users/braydencredeur/Antigravity/Website/Brainstorm/Development_Plan.md` ← **read this first**
+**Companion docs:** `ACTION_ITEMS.md` (human tasks) · `CONVERSATION_LOG.md` (decision history) · `PROMPT_LOG.md` (graded evidence)
 
 ---
 
 ## TL;DR for the next session
 
-Phase 1 (scaffold) is **done, committed, and verified building**. Next action is **Phase 2: the dark-mode layout shell**. Nothing is blocked. Supabase credentials are not needed until Phase 5.
+**Phases 1–3 are done, committed, and verified.** The dashboard is visually complete on mock data — build passes, lint clean, all three metrics and all four status badges confirmed in rendered HTML.
+
+**Next action is Phase 4: the first deployment.** It is *blocked on the user* creating GitHub + Vercel accounts (see `ACTION_ITEMS.md`). This phase removes the "no live deployment = max 5/10" cap and is the highest-value remaining work.
+
+**If the user has the accounts ready**, the sequence is: push to GitHub → import in Vercel → deploy → collect the live URL.
+**If not**, useful unblocked work: Phase 6 polish, or the Phase 9 docs (README, stack table, implementation note, testable acceptance criteria) — all of which are graded and none of which need accounts.
+
+`supabase/schema.sql` is already written and ready to paste for Phase 5.
 
 ```bash
 cd /Users/braydencredeur/Antigravity/Website/Dev/servicepro
@@ -42,7 +50,7 @@ npm run dev     # → http://localhost:3000
 | TypeScript | ^5 |
 | `@supabase/supabase-js` | installed ✅ |
 | Node / npm | v25.8.2 / 11.11.1 |
-| Git | initialized, **2 commits** |
+| Git | initialized, **7 commits** |
 | GitHub remote | ❌ not created yet |
 | Vercel project | ❌ not created yet |
 | Supabase project | ❌ not created yet |
@@ -69,23 +77,52 @@ npm run dev     # → http://localhost:3000
 
 ## Current state of the code
 
-Everything is still the create-next-app default. **No ServicePro UI exists yet.** Files touched: `.gitignore`, `next.config.ts`, `.env.example`, `.env.local`, `docs/`.
+```
+app/
+  globals.css      Design tokens in @theme (Tailwind v4 CSS-first). Dark-only —
+                   the default prefers-color-scheme block was removed, not overridden.
+  layout.tsx       Geist fonts, ServicePro metadata
+  page.tsx         The dashboard. Server Component, force-dynamic, captures `now` once
+components/
+  Sidebar.tsx      4 items; Dashboard active, other 3 inert <span>s (not dead links)
+  SummaryCards.tsx 3 derived cash-flow metrics
+  ProjectsTable.tsx Table from sm up; stacked cards below sm
+  StatusBadge.tsx  4 variants, full class strings (v4 scans for complete strings)
+lib/
+  format.ts        Currency + dates. Locale pinned en-US, UTC parsing, `now` injected
+  mock-data.ts     6 projects, deadlines relative to today
+  projects.ts      deriveMetrics() + getDashboardData(). Supabase branch lands in Phase 5
+types/project.ts   Project, ProjectStatus, DashboardMetrics, DataSource
+supabase/schema.sql  Ready to paste — table + RLS + seed + verification query
+```
 
-`app/globals.css` still holds the default light/dark `prefers-color-scheme` scaffolding and `font-family: Arial`. **Phase 2 replaces this** — ServicePro is dark-only by design, so the media query should go rather than being fought with overrides.
+### Verified working
+- Build passes, lint clean
+- Route renders `ƒ` (dynamic), not `○` (static) — this matters, see below
+- Metrics render exactly to spec: **$3,450 / $4,200 / 5**
+- All four status badges present; no console errors
+
+### Two non-obvious things already fixed here
+1. **The route was prerendering as static**, freezing `new Date()` into the HTML at build time. Deployed, "in 3 days" would have counted from the last deploy and drifted daily. `export const dynamic = "force-dynamic"` fixes it — **do not remove it**, Phase 5 needs it too so Supabase edits appear on refresh.
+2. **Tailwind v4 renamed `bg-gradient-to-*` → `bg-linear-to-*`.** Expect more v3/v4 drift; trust the IDE diagnostics.
 
 ---
 
-## ▶️ Next: Phase 2 — Layout Shell (~30 min)
+## ▶️ Next: Phase 4 — First deployment (~30 min) 🔴 BLOCKED ON USER
 
-1. Replace `app/globals.css`: drop the `prefers-color-scheme` block, define the §5 design tokens in `@theme`, set `bg-slate-950` on body.
-2. `app/layout.tsx`: force dark, wire the Geist font, set metadata (title "ServicePro", description).
-3. `components/Sidebar.tsx`: brand + 4 items (Dashboard, Projects, Time Tracking, Settings). **Dashboard is the only active one; the other three are inert and dimmed with `aria-disabled`** — this resolves the handoff's contradiction between "sidebar with 4 links" and "no routing."
-4. Main content region + page header: "Projects Overview" / "Welcome back".
-5. Commit.
+**This is the highest-value remaining step** — it removes the max-5/10 cap.
 
-**Exit criteria:** a polished, empty dark shell that runs clean.
+Requires the user to have created a GitHub repo and Vercel account (`ACTION_ITEMS.md` walks them through it). Then:
 
-Then Phase 3 (mock UI) → **Phase 4 is the first deploy, and it matters most** — see below.
+1. `git remote add origin <their-repo-url>` → `git push -u origin main`
+2. User imports the repo in Vercel, all settings default, clicks Deploy
+3. Confirm the live URL loads — it will show **mock data**, which is expected and correct at this stage
+4. Record the URL in the README and `TEST_EVIDENCE.md`
+
+> Deploying with **no environment variables** is intentional and already verified. The null-safe Supabase client means the build succeeds and falls back to mock rather than crashing.
+
+### Then Phase 5 — Supabase
+`supabase/schema.sql` is written. User runs it in the SQL editor, pastes 2 keys into `.env.local` *and* Vercel, then redeploys. Code change needed: add the Supabase branch to `getDashboardData()` in `lib/projects.ts` — the fallback contract and return shape are already final, so `page.tsx` does not change.
 
 ---
 
@@ -102,7 +139,7 @@ Then Phase 3 (mock UI) → **Phase 4 is the first deploy, and it matters most** 
 
 | Item | Notes |
 |---|---|
-| Prompt log at 4/5 | Will pass 5 naturally during Phase 2–3 |
+| Prompt log | ✅ 5/5 minimum met |
 | Acceptance criteria not yet testable | Rubric demands "testable"; rewrite as pass/fail assertions (plan §1.1) |
 | No stack table | Rubric names it explicitly; packet has prose bullets only |
 | No UX implementation note | Rubric names it explicitly; must document mockup→build divergences |

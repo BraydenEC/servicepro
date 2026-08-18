@@ -119,23 +119,34 @@ docs/              9 documents, all graded evidence
 ### Four non-obvious things already fixed — do not undo these
 1. **`force-dynamic` on the page.** The route was prerendering as static, which freezes `new Date()` into the HTML at build time — "in 3 days" would have counted from the last deploy and drifted daily while looking fine on launch day. Phase 5 needs it too, so database edits appear on refresh.
 2. **The Supabase client returns `null` instead of throwing.** A throw at module scope happens during `next build` and fails the *deployment*, so the fallback would never run. Missing credentials are a supported state.
-3. **Numeric coercion in `mapRow()`.** PostgREST serializes Postgres `numeric` as a **string** (`"64.50"`), so `hours × rate` would silently produce `NaN` — visible only once the real database connects, i.e. during the demo.
+3. **Numeric coercion in `mapRow()`.** Defence in depth: `numeric` *can* be serialized as a JSON string, which would make `hours × rate` produce `NaN`. Verified against this live database it returns plain numbers, so no such bug exists here — the guard stays because it costs nothing and also covers nulls and hand-edited rows. (An earlier version of this file overstated this as a bug that was fixed; corrected in iteration 12.)
 4. **Tailwind v4 renamed `bg-gradient-to-*` → `bg-linear-to-*`.** Expect more v3/v4 drift; trust the IDE diagnostics.
 
 ---
 
-## ▶️ Next: Phase 4 — First deployment (~30 min) 🔴 BLOCKED ON USER
+## ✅ Deployment — complete
 
-**This is the highest-value remaining step** — it removes the max-5/10 cap.
+Live at <https://servicepro-orpin.vercel.app>, reading Postgres. 7 deployments,
+auto-triggered by pushes to `main`.
 
-Requires the user to have created a GitHub repo and Vercel account (`ACTION_ITEMS.md` walks them through it). Then:
+**Production-verified:** HTTP 200 in 0.68s · `data-source="supabase"` · 6 rows ·
+all four badges · 0 `NaN` · 0 dead links · 0 credentials in the HTML or any of
+the 6 client JS chunks.
 
-1. `git remote add origin <their-repo-url>` → `git push -u origin main`
-2. User imports the repo in Vercel, all settings default, clicks Deploy
-3. Confirm the live URL loads — it will show **mock data**, which is expected and correct at this stage
-4. Record the URL in the README and `TEST_EVIDENCE.md`
+### ⚠️ The one thing to know if this ever regresses
 
-> Deploying with **no environment variables** is intentional and already verified. The null-safe Supabase client means the build succeeds and falls back to mock rather than crashing.
+Production silently served **mock data** from its first deployment until the
+environment variables were added in Vercel. Nothing revealed it — the fallback
+is indistinguishable from real data by design. If the dashboard ever looks fine
+but the database seems ignored, check this first:
+
+```bash
+curl -s https://servicepro-orpin.vercel.app | grep -o 'data-source="[a-z]*"'
+```
+
+`mock` means Vercel's environment variables are missing or the build was cached.
+Adding variables does **not** trigger a rebuild — redeploy with build cache
+**off**.
 
 ### Then Phase 5 — Supabase
 `supabase/schema.sql` is written. User runs it in the SQL editor, pastes 2 keys into `.env.local` *and* Vercel, then redeploys. Code change needed: add the Supabase branch to `getDashboardData()` in `lib/projects.ts` — the fallback contract and return shape are already final, so `page.tsx` does not change.

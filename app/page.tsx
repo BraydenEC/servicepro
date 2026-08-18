@@ -32,10 +32,21 @@ export const dynamic = "force-dynamic";
 
 export default async function Home() {
   const now = new Date();
-  const { projects, metrics } = await getDashboardData(now);
+  const { projects, metrics, source } = await getDashboardData(now);
 
   return (
-    <div className="flex min-h-screen">
+    /*
+      `data-source` records whether this render came from Supabase or the mock
+      fallback. It exists because the two are deliberately indistinguishable to
+      a viewer — same projects, same figures — which is the right behaviour for
+      resilience but leaves no way to prove the deployed site is actually
+      reading the database.
+
+      An attribute rather than visible UI: it must not look like a debug badge
+      on a finished product, but `curl … | grep data-source` answers the
+      question in one command.
+    */
+    <div data-source={source} className="flex min-h-screen">
       <Sidebar />
 
       <main className="min-w-0 flex-1">

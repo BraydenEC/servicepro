@@ -1,6 +1,6 @@
 # 🤝 ServicePro — Session Handoff
 
-**Last updated:** Aug 17, 2026 · end of Phase 3
+**Last updated:** Aug 17, 2026 · end of Phase 5 (code) + Phase 9 (docs)
 **Project root:** `/Users/braydencredeur/Antigravity/Website/Dev/servicepro`
 **Master plan:** `/Users/braydencredeur/Antigravity/Website/Brainstorm/Development_Plan.md` ← **read this first**
 **Companion docs:** `ACTION_ITEMS.md` (human tasks) · `CONVERSATION_LOG.md` (decision history) · `PROMPT_LOG.md` (graded evidence)
@@ -9,14 +9,27 @@
 
 ## TL;DR for the next session
 
-**Phases 1–3 are done, committed, and verified.** The dashboard is visually complete on mock data — build passes, lint clean, all three metrics and all four status badges confirmed in rendered HTML.
+**All code that can be written without credentials is written.** Phases 1–3 (UI),
+Phase 5's code half (Supabase integration), and Phase 9's documentation are done
+and committed — 9 commits, build passing, lint clean.
 
-**Next action is Phase 4: the first deployment.** It is *blocked on the user* creating GitHub + Vercel accounts (see `ACTION_ITEMS.md`). This phase removes the "no live deployment = max 5/10" cap and is the highest-value remaining work.
+**Every remaining task is blocked on the user's accounts, camera, or voice.**
+There is no meaningful unblocked coding work left. Do not go looking for
+refactors to fill time — the highest-value action is helping the user through
+Phase 4.
 
-**If the user has the accounts ready**, the sequence is: push to GitHub → import in Vercel → deploy → collect the live URL.
-**If not**, useful unblocked work: Phase 6 polish, or the Phase 9 docs (README, stack table, implementation note, testable acceptance criteria) — all of which are graded and none of which need accounts.
+**When the user returns with a GitHub URL:**
+```bash
+git remote add origin <their-url>
+git push -u origin main
+```
+Then they import it in Vercel (all defaults) and send back the live URL. That
+single step is worth 2.0 points and lifts the max-5/10 deployment cap.
 
-`supabase/schema.sql` is already written and ready to paste for Phase 5.
+**When they return with Supabase keys:** paste into `.env.local`, have them run
+`supabase/schema.sql` in the SQL Editor, add both keys in Vercel too, redeploy.
+**No code change is needed** — the Supabase fetch path is already written and
+both of its failure modes are tested.
 
 ```bash
 cd /Users/braydencredeur/Antigravity/Website/Dev/servicepro
@@ -50,7 +63,7 @@ npm run dev     # → http://localhost:3000
 | TypeScript | ^5 |
 | `@supabase/supabase-js` | installed ✅ |
 | Node / npm | v25.8.2 / 11.11.1 |
-| Git | initialized, **7 commits** |
+| Git | initialized, **9 commits** |
 | GitHub remote | ❌ not created yet |
 | Vercel project | ❌ not created yet |
 | Supabase project | ❌ not created yet |
@@ -91,9 +104,11 @@ components/
 lib/
   format.ts        Currency + dates. Locale pinned en-US, UTC parsing, `now` injected
   mock-data.ts     6 projects, deadlines relative to today
-  projects.ts      deriveMetrics() + getDashboardData(). Supabase branch lands in Phase 5
+  projects.ts      Supabase fetch + 4 fallback paths + deriveMetrics()
+  supabase.ts      Null-safe client factory — returns null, never throws
 types/project.ts   Project, ProjectStatus, DashboardMetrics, DataSource
 supabase/schema.sql  Ready to paste — table + RLS + seed + verification query
+docs/              9 documents, all graded evidence
 ```
 
 ### Verified working
@@ -101,10 +116,15 @@ supabase/schema.sql  Ready to paste — table + RLS + seed + verification query
 - Route renders `ƒ` (dynamic), not `○` (static) — this matters, see below
 - Metrics render exactly to spec: **$3,450 / $4,200 / 5**
 - All four status badges present; no console errors
+- **Fallback tested both ways:** empty credentials → HTTP 200 + mock; unreachable host → HTTP 200 + mock
+- **Timezone-safe:** identical dates rendered under UTC−7, UTC+9, and UTC
+- **Navigation:** exactly 1 `aria-current`, 3 `aria-disabled`, **0** `href="#"`
 
-### Two non-obvious things already fixed here
-1. **The route was prerendering as static**, freezing `new Date()` into the HTML at build time. Deployed, "in 3 days" would have counted from the last deploy and drifted daily. `export const dynamic = "force-dynamic"` fixes it — **do not remove it**, Phase 5 needs it too so Supabase edits appear on refresh.
-2. **Tailwind v4 renamed `bg-gradient-to-*` → `bg-linear-to-*`.** Expect more v3/v4 drift; trust the IDE diagnostics.
+### Four non-obvious things already fixed — do not undo these
+1. **`force-dynamic` on the page.** The route was prerendering as static, which freezes `new Date()` into the HTML at build time — "in 3 days" would have counted from the last deploy and drifted daily while looking fine on launch day. Phase 5 needs it too, so database edits appear on refresh.
+2. **The Supabase client returns `null` instead of throwing.** A throw at module scope happens during `next build` and fails the *deployment*, so the fallback would never run. Missing credentials are a supported state.
+3. **Numeric coercion in `mapRow()`.** PostgREST serializes Postgres `numeric` as a **string** (`"64.50"`), so `hours × rate` would silently produce `NaN` — visible only once the real database connects, i.e. during the demo.
+4. **Tailwind v4 renamed `bg-gradient-to-*` → `bg-linear-to-*`.** Expect more v3/v4 drift; trust the IDE diagnostics.
 
 ---
 
@@ -135,18 +155,36 @@ Requires the user to have created a GitHub repo and Vercel account (`ACTION_ITEM
 
 ---
 
+## Rubric coverage — where the 10 points stand
+
+| Category | Pts | Status |
+|---|---|---|
+| 🧠 Build discipline before coding | 1.5 | ✅ Packet complete before any code |
+| 🖼 UX planning + mockup | 1.0 | ✅ `IMPLEMENTATION_NOTE.md` covers the required implementation note + scope cut |
+| 🧱 Product spec + acceptance criteria | 1.0 | ✅ `ACCEPTANCE_CRITERIA.md` — ~40 testable pass/fail criteria |
+| 🏗 Architecture + stack table | 1.0 | ✅ `ARCHITECTURE.md` — Mermaid diagrams + stack table with rejected alternatives |
+| 🌐 Working deployed product | 2.0 | ⏳ **Phase 4 — blocked on user accounts** |
+| 🧑‍💻 Coding/build evidence | 1.0 | 🟡 9 commits ✅, prompt log 5/5 ✅, **0/2 deploys** |
+| 🧪 Testing and iteration | 1.0 | 🟡 4/7 tests done, 11 iterations logged ✅; 3 tests need the live URL |
+| 🧠 Human judgment | 1.0 | 🔲 **User writes** — raw material ready in `CONVERSATION_LOG.md` |
+| 🎥 Demo clarity | 0.5 | 🔲 **User records** — shot list in `ACTION_ITEMS.md` |
+
+**Everything not blocked on an account or a camera is done.** The remaining
+2.0-point deployment item is the single highest-value action left.
+
+> Note: the Mermaid diagrams in `ARCHITECTURE.md` render natively on GitHub —
+> screenshot them from there for the submission PDF. No image file needed.
+
 ## Known items still open
 
-| Item | Notes |
+| Item | Owner |
 |---|---|
-| Prompt log | ✅ 5/5 minimum met |
-| Acceptance criteria not yet testable | Rubric demands "testable"; rewrite as pass/fail assertions (plan §1.1) |
-| No stack table | Rubric names it explicitly; packet has prose bullets only |
-| No UX implementation note | Rubric names it explicitly; must document mockup→build divergences |
-| Architecture sketch is ASCII | Needs to be a real image for submission |
-| Supabase/GitHub/Vercel accounts | **Yours to create** — needed at Phases 4 and 5 |
-| Human Decision Note | **Yours to write** (150–250 words, must cover tradeoffs) |
-| Demo video | **Yours to record** — shot list in plan §6, Phase 9 |
+| GitHub repo + Vercel + Supabase accounts | **User** — blocks Phases 4–5 |
+| Live-deployment tests 5–7 | Blocked on the above |
+| Human Decision Note (150–250 words, must cover tradeoffs) | **User** |
+| Demo video (2–3 min) | **User** |
+| Final assembly into one submission PDF | **User** |
+| Screenshots (Supabase table, RLS policy, Vercel deploys, GitHub commits) | **User** |
 
 ---
 

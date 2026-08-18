@@ -7,29 +7,25 @@
 
 ---
 
-## TL;DR for the next session
+## TL;DR — the build is complete and shipped
 
-**All code that can be written without credentials is written.** Phases 1–3 (UI),
-Phase 5's code half (Supabase integration), and Phase 9's documentation are done
-and committed — 9 commits, build passing, lint clean.
+🌐 **Live:** <https://servicepro-orpin.vercel.app> — HTTP 200, reading Supabase
+📁 **Repo:** <https://github.com/BraydenEC/servicepro> — 13 commits, 7 deployments
 
-**Every remaining task is blocked on the user's accounts, camera, or voice.**
-There is no meaningful unblocked coding work left. Do not go looking for
-refactors to fill time — the highest-value action is helping the user through
-Phase 4.
+**All engineering is done.** The app is deployed, connected to Postgres,
+security-verified, and every automated check passes. There is **no remaining
+code work**, and none should be invented — the project is feature-complete
+against a deliberately fixed scope.
 
-**When the user returns with a GitHub URL:**
-```bash
-git remote add origin <their-url>
-git push -u origin main
-```
-Then they import it in Vercel (all defaults) and send back the live URL. That
-single step is worth 2.0 points and lifts the max-5/10 deployment cap.
+**Everything left requires a human:** screenshots, a 2–3 minute demo video, the
+150–250 word Human Decision Note, and assembling the submission PDF. All four
+are itemized in `SUBMISSION.md`, with source material in
+`DECISION_NOTE_MATERIAL.md`.
 
-**When they return with Supabase keys:** paste into `.env.local`, have them run
-`supabase/schema.sql` in the SQL Editor, add both keys in Vercel too, redeploy.
-**No code change is needed** — the Supabase fetch path is already written and
-both of its failure modes are tested.
+**If asked to keep working:** the honest answer is that the highest-value
+remaining action is the video and the note, neither of which an agent can do.
+Adding features would violate the scope cut that the Build Discipline Packet is
+graded on.
 
 ```bash
 cd /Users/braydencredeur/Antigravity/Website/Dev/servicepro
@@ -63,10 +59,10 @@ npm run dev     # → http://localhost:3000
 | TypeScript | ^5 |
 | `@supabase/supabase-js` | installed ✅ |
 | Node / npm | v25.8.2 / 11.11.1 |
-| Git | initialized, **9 commits** |
-| GitHub remote | ❌ not created yet |
-| Vercel project | ❌ not created yet |
-| Supabase project | ❌ not created yet |
+| Git | initialized, **13 commits** |
+| GitHub remote | ✅ live |
+| Vercel project | ✅ live |
+| Supabase project | ✅ live |
 
 ---
 
@@ -160,31 +156,30 @@ Requires the user to have created a GitHub repo and Vercel account (`ACTION_ITEM
 | Category | Pts | Status |
 |---|---|---|
 | 🧠 Build discipline before coding | 1.5 | ✅ Packet complete before any code |
-| 🖼 UX planning + mockup | 1.0 | ✅ `IMPLEMENTATION_NOTE.md` covers the required implementation note + scope cut |
-| 🧱 Product spec + acceptance criteria | 1.0 | ✅ `ACCEPTANCE_CRITERIA.md` — ~40 testable pass/fail criteria |
-| 🏗 Architecture + stack table | 1.0 | ✅ `ARCHITECTURE.md` — Mermaid diagrams + stack table with rejected alternatives |
-| 🌐 Working deployed product | 2.0 | ⏳ **Phase 4 — blocked on user accounts** |
-| 🧑‍💻 Coding/build evidence | 1.0 | 🟡 9 commits ✅, prompt log 5/5 ✅, **0/2 deploys** |
-| 🧪 Testing and iteration | 1.0 | 🟡 4/7 tests done, 11 iterations logged ✅; 3 tests need the live URL |
-| 🧠 Human judgment | 1.0 | 🔲 **User writes** — raw material ready in `CONVERSATION_LOG.md` |
-| 🎥 Demo clarity | 0.5 | 🔲 **User records** — shot list in `ACTION_ITEMS.md` |
+| 🖼 UX planning + mockup | 1.0 | ✅ `IMPLEMENTATION_NOTE.md` — implementation note + 6 documented divergences + scope cut |
+| 🧱 Product spec + acceptance criteria | 1.0 | ✅ `ACCEPTANCE_CRITERIA.md` — ~50 testable pass/fail criteria |
+| 🏗 Architecture + stack table | 1.0 | ✅ `ARCHITECTURE.md` — 3 Mermaid diagrams + stack table with rejected alternatives |
+| 🌐 Working deployed product | 2.0 | ✅ Live, 0.68s, reading Postgres |
+| 🧑‍💻 Coding/build evidence | 1.0 | ✅ 13 commits · 7 deploys · 5 prompts |
+| 🧪 Testing and iteration | 1.0 | ✅ 9 tests documented · 16 iterations |
+| 🧠 Human judgment | 1.0 | 🔲 **User writes** — material in `DECISION_NOTE_MATERIAL.md` |
+| 🎥 Demo clarity | 0.5 | 🔲 **User records** — shot list in `SUBMISSION.md` |
 
-**Everything not blocked on an account or a camera is done.** The remaining
-2.0-point deployment item is the single highest-value action left.
+**8.5 of 10 points are secured.** The remaining 1.5 cannot be produced by an
+agent.
 
-> Note: the Mermaid diagrams in `ARCHITECTURE.md` render natively on GitHub —
+> The Mermaid diagrams in `ARCHITECTURE.md` render natively on GitHub —
 > screenshot them from there for the submission PDF. No image file needed.
 
-## Known items still open
+## Known items still open — all human
 
 | Item | Owner |
 |---|---|
-| GitHub repo + Vercel + Supabase accounts | **User** — blocks Phases 4–5 |
-| Live-deployment tests 5–7 | Blocked on the above |
-| Human Decision Note (150–250 words, must cover tradeoffs) | **User** |
 | Demo video (2–3 min) | **User** |
+| Human Decision Note (150–250 words, must cover tradeoffs) | **User** |
+| Screenshots (8 listed in `SUBMISSION.md`) | **User** |
 | Final assembly into one submission PDF | **User** |
-| Screenshots (Supabase table, RLS policy, Vercel deploys, GitHub commits) | **User** |
+| 3 browser-based tests (console, responsive, live-edit) | **User** |
 
 ---
 

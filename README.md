@@ -3,7 +3,7 @@
 **A project and invoice tracker for freelancers.** Built for the Week 0 Setup
 Sprint of *Negocios Inteligentes*.
 
-🔗 **Live:** _pending deployment — link added once Vercel import completes_
+🔗 **Live:** <https://servicepro-orpin.vercel.app>
 📁 **Repo:** <https://github.com/BraydenEC/servicepro>
 
 ---

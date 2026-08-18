@@ -92,27 +92,28 @@ Status: ✅ verified · ⏳ pending deployment · 🔲 not yet run
 
 | # | Criterion | How to verify | Pass condition | Status |
 |---|---|---|---|---|
-| 7.1 | Live URL loads publicly | Open in a private window | HTTP 200, no auth wall | ⏳ |
-| 7.2 | Console is clean | Open DevTools on the live site | Zero errors; **no hydration warnings** | ⏳ |
+| 7.1 | Live URL loads publicly | Request the Vercel URL | HTTP 200, no auth wall — **0.68s** | ✅ |
+| 7.2 | Console is clean | Open DevTools on the live site | Zero errors; **no hydration warnings** | 🔲 |
 | 7.3 | The route is server-rendered per request | `npm run build` output | Route `/` marked `ƒ (Dynamic)`, not `○ (Static)` | ✅ |
-| 7.4 | Pushing to `main` triggers a deploy | Push a commit | Vercel builds automatically | ⏳ |
+| 7.4 | Pushing to `main` triggers a deploy | Push a commit | Vercel builds automatically — 6+ deployments | ✅ |
 | 7.5 | No secrets in the repository | `git log -p -- .env.local` | No output — the file was never committed | ✅ |
+| 7.6 | **Production reads the database, not the fallback** | `curl <url> \| grep data-source` | `data-source="supabase"` | ✅ |
+| 7.7 | No credentials in the production bundle | Scan live HTML + all client chunks | 0 matches across 7 files | ✅ |
 
 ---
 
 ## Definition of Done
 
-Every ✅ and ⏳ criterion above passes, and:
-
-- [ ] Live URL loads at submission time
-- [ ] Live URL renders **Supabase** rows, not the mock fallback
-- [ ] ≥5 commits pushed to GitHub
-- [ ] ≥2 successful Vercel deployments
-- [ ] ≥5 prompts logged
-- [ ] 3 self-tests documented with evidence
-- [ ] ≥1 improvement recorded in the iteration log
-- [ ] Demo video, 2–3 minutes
-- [ ] Human Decision Note, 150–250 words
+- [x] Live URL loads at submission time — <https://servicepro-orpin.vercel.app>
+- [x] Live URL renders **Supabase** rows, not the mock fallback — verified `data-source="supabase"`
+- [x] ≥5 commits pushed to GitHub — **13**
+- [x] ≥2 successful Vercel deployments — **7**
+- [x] ≥5 prompts logged — **5**
+- [x] 3 self-tests documented with evidence — **9**
+- [x] ≥1 improvement recorded in the iteration log — **16**
+- [ ] Demo video, 2–3 minutes — *user*
+- [ ] Human Decision Note, 150–250 words — *user*
+- [ ] Final assembly into one submission document — *user*
 
 ---
 

@@ -163,7 +163,55 @@ Recorded as Test 8.
 
 ---
 
+## Deployment stage
+
+### 14. ⭐⭐ Production was serving mock data — and looked perfect doing it
+**Found by:** the `data-source` attribute added in iteration 15 below, queried
+against production.
+
+**Problem:** the deployed site had **never once queried the database.** The
+Supabase project existed, the schema was correct, six rows were seeded, RLS was
+verified, and the app worked perfectly against Postgres *locally* — but the
+environment variables were never added during the Vercel import, so production
+had been silently rendering `mock-data.ts` since the first deploy.
+
+**Why nothing revealed it:** the fallback is deliberately indistinguishable from
+the real thing. Same six projects, same $3,450 / $4,200 / 5, same badges, same
+deadlines. Every visible check passed. The database evidence would have been
+graded against a site that never touched its database.
+
+**Change:** added both variables in Vercel → Settings → Environment Variables,
+then redeployed **without build cache** — adding variables does not trigger a
+rebuild, and a cached build can reuse the previous bundle and ignore them.
+Confirmed `data-source="mock"` → `data-source="supabase"` on production.
+
+**Lesson:** the resilience feature and the verification problem were the same
+feature. A fallback good enough to hide an outage is also good enough to hide a
+misconfiguration — so anything that degrades silently needs a deliberate way to
+observe which path it took.
+
+### 15. Built a way to tell the two data paths apart
+**Found by:** trying to verify iteration 14 and realising it was unanswerable.
+**Problem:** with mock and live output identical, there was no way — from
+outside the process — to determine which one produced a given page.
+**Change:** the root element now renders `data-source="supabase" | "mock"`. An
+attribute rather than visible UI, because a debug badge on a finished product
+reads as unfinished, while `curl … | grep data-source` answers it in one
+command. Verified both branches locally before deploying.
+
+### 16. Credential exposure verified on production, not just locally
+**Found by:** noting that a local bundle scan proves nothing about what Vercel
+actually shipped.
+**Method:** fetched the production HTML plus all 6 client JavaScript chunks and
+searched every one for the project ref, the anon JWT, and `service_role`.
+**Result:** 0 matches across all 7 files. The `NEXT_PUBLIC_` prefix permits
+client exposure, but because the credentials are referenced only from Server
+Components, Next.js never inlines them into browser JavaScript.
+**Change:** none needed — an assumption became a measurement.
+
+---
+
 ## Pending
 
-Iterations 14+ will come from the live-deployment tests (5–7 in
-`TEST_EVIDENCE.md`), which need the Vercel environment.
+Iterations 17+ would come from the three remaining browser-based tests
+(console inspection, responsive widths, live-edit demo) in `TEST_EVIDENCE.md`.

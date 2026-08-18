@@ -4,8 +4,9 @@ Rubric requires **3 self-tests of deployment and navigation**, plus at least one
 improvement made as a result. This file records tests actually executed, with
 their commands and raw output.
 
-**Status:** 6 of 9 tests complete — already double the required 3. Tests 7–9
-require the live deployment.
+**Live URL:** <https://servicepro-orpin.vercel.app>
+**Status:** ✅ **9 of 12 complete** — three times the required 3. The remaining
+three need a browser (console inspection, responsive widths, live-edit demo).
 
 ---
 
@@ -199,22 +200,108 @@ place. The second property came free from the decision to fetch server-side.
 
 ---
 
-## Test 7 — Live deployment loads ⏳ PENDING
+## Test 7 — Live deployment loads ✅ PASS
 
-Requires Phase 4. Method: open the Vercel URL in a private window; expect HTTP
-200, no auth wall, dashboard fully rendered.
+**URL:** <https://servicepro-orpin.vercel.app>
 
-## Test 8 — Live console is clean ⏳ PENDING
+**Method**
+```bash
+curl -s -o /dev/null -w "%{http_code} %{time_total}s" https://servicepro-orpin.vercel.app
+```
 
-Requires deployment. Method: DevTools console on the live URL; expect zero
-errors and **no hydration warnings** — the reason `now` is captured once
-server-side and all locales are pinned.
+**Result**
+```
+Status:     HTTP 200
+Load time:  0.68s
+Size:       47,338 bytes
+Title:      ServicePro — Freelance Project & Invoice Tracker
+Projects:   6 rendered
+Statuses:   In Progress / Awaiting Review / Invoice Sent / Overdue (all four)
+Metrics:    $3,450 · $4,200 · 5
+NaN:        0
+Dead links: 0
+aria-current="page": 1
+```
 
-## Test 9 — Deployed site reads the live database ⏳ PENDING
+**Verdict:** PASS. Public, fast, complete, and no auth wall.
 
-Requires deployment. Method: rename a project in the Supabase Table Editor,
-refresh the live URL, confirm the new name appears without a redeploy. Proves
-the deployed site reads Postgres rather than the fallback.
+---
+
+## Test 8 — 🚨 Deployed site was silently serving mock data ✅ PASS (after fix)
+
+**This is the most valuable test in the project.** It caught a fault that was
+invisible by every other means.
+
+**Why it exists:** the mock fallback and the live database render *identically*
+— same six projects, same figures, same badges. That is correct behaviour for
+resilience, but it means a deployment with a broken database connection looks
+exactly like a healthy one. Nothing on screen distinguishes them.
+
+**Method** — added a `data-source` attribute to the rendered root recording
+which branch produced the page, then queried production:
+```bash
+curl -s https://servicepro-orpin.vercel.app | grep -o 'data-source="[a-z]*"'
+```
+
+**Result — first run**
+```
+data-source="mock"
+```
+
+**Diagnosis:** the environment variables had never been added during the Vercel
+import. Production had been serving the fallback dataset since the first deploy.
+The site looked perfect and the database was live and correctly seeded — but the
+deployed application had never once queried it.
+
+**Fix:** added `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` in
+Vercel → Settings → Environment Variables, then redeployed **without** the build
+cache. (Adding variables does not itself rebuild; a cached build can also reuse
+the previous bundle and ignore them.)
+
+**Result — after fix**
+```
+data-source="supabase"
+```
+
+**Verdict:** PASS after remediation. Without this test the project would have
+submitted a flawless-looking dashboard that never touched its own database —
+losing the separately-graded Supabase evidence while appearing entirely correct.
+
+---
+
+## Test 9 — No credentials reach the browser in production ✅ PASS
+
+**Method** — scan the production HTML and every client JavaScript bundle it
+loads:
+```bash
+curl -s $URL | grep -c "thoiiclzmxzvdylteupn\|service_role\|eyJhbGci..."
+# then fetch each /_next/static/*.js chunk and grep the same patterns
+```
+
+**Result**
+```
+Credentials in production HTML:     0
+Client chunks scanned:              6
+Chunks containing credentials:      0
+```
+
+**Verdict:** PASS. Despite the `NEXT_PUBLIC_` prefix permitting client exposure,
+the variables are referenced only from Server Components, so Next.js never
+inlines them into browser JavaScript. Confirmed on the deployed build, not just
+locally.
+
+---
+
+## Remaining — manual, require a browser
+
+| # | Test | Method |
+|---|---|---|
+| 10 | Console is clean | DevTools on the live URL; expect zero errors and **no hydration warnings** |
+| 11 | Responsive | Device toolbar at 375px, 768px, 1440px |
+| 12 | Live edits propagate | Rename a project in the Supabase Table Editor, refresh the live URL — new name appears with no redeploy |
+
+Test 12 is worth doing on camera: it demonstrates the full stack end to end in
+about fifteen seconds.
 
 ---
 

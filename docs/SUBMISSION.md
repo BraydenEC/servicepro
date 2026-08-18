@@ -21,7 +21,7 @@
 |---|---|---|---|
 | Live URL loads | — | ✅ HTTP 200, 0.68s | link above |
 | Build Discipline Packet | complete before coding | ✅ | `Build_Discipline_Packet.md` |
-| UX mockup / wireframe | 1 | ✅ | `freelance_dashboard_mockup.png` |
+| UX mockup / wireframe | 1 | ✅ | [`images/ux-mockup.jpg`](images/ux-mockup.jpg) |
 | UX implementation note | — | ✅ | [`IMPLEMENTATION_NOTE.md`](IMPLEMENTATION_NOTE.md) |
 | Product spec + acceptance criteria | testable | ✅ ~50 criteria | [`ACCEPTANCE_CRITERIA.md`](ACCEPTANCE_CRITERIA.md) |
 | Architecture sketch + stack table | — | ✅ 3 diagrams | [`ARCHITECTURE.md`](ARCHITECTURE.md) |

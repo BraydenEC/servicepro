@@ -5,8 +5,14 @@ Rubric item: *"Mockup or wireframe, **implementation note**, and scope cut are i
 How the image-generated mockup became the shipped interface — what was kept,
 what was deliberately changed, and why.
 
-**Mockup:** `freelance_dashboard_mockup_1787006849587.png` (AI-generated during
-the UX planning stage, before any code existed)
+**Mockup:** [`images/ux-mockup.jpg`](images/ux-mockup.jpg) — AI-generated during
+the UX planning stage, before any code existed.
+
+![UX mockup](images/ux-mockup.jpg)
+
+> Note: the original file was named `.png` but contained JPEG data. That
+> mismatch is why it failed to display in several tools; it is stored here with
+> the correct extension.
 
 ---
 

@@ -60,10 +60,22 @@ Status: ✅ verified · ⏳ pending deployment · 🔲 not yet run
 | 5.2 | Renders with no credentials | Load with empty env vars | HTTP 200, full mock dataset, no visible error | ✅ |
 | 5.3 | Survives an unreachable database | Set a bogus Supabase URL, reload | HTTP 200, mock data, warning logged server-side | ✅ |
 | 5.4 | Survives an empty table | `DELETE FROM projects`, reload | HTTP 200, mock data | 🔲 |
-| 5.5 | Live data displaces mock data | Seed the table, reload | Table shows **database** rows, not mock | ⏳ |
-| 5.6 | Edits appear on refresh | Rename a project in Supabase, reload | New name appears without a redeploy | ⏳ |
+| 5.5 | Live data displaces mock data | Seed the table, reload | Table shows **database** rows, not mock — no fallback logged | ✅ |
+| 5.6 | Edits appear on refresh | Rename a project in Supabase, reload | New name appears without a redeploy | 🔲 |
 | 5.7 | Fallback is invisible to the user | Compare healthy vs. degraded | No error banner, no empty state, no layout shift | ✅ |
-| 5.8 | Numeric precision survives the database | Inspect values with live data | Amounts render as currency, never `NaN` | ⏳ |
+| 5.8 | Numeric precision survives the database | Inspect values with live data | Amounts render as currency, never `NaN` | ✅ |
+| 5.9 | Metrics agree across data sources | Compare mock vs. live rendering | Both derive $3,450 / $4,200 / 5 | ✅ |
+
+## F8 — Security
+
+| # | Criterion | How to verify | Pass condition | Status |
+|---|---|---|---|---|
+| 8.1 | Anonymous reads are permitted | `GET /rest/v1/projects` with the anon key | HTTP 200, rows returned | ✅ |
+| 8.2 | Anonymous inserts are refused | `POST` a row with the anon key | Non-2xx, **and** no new row on re-query | ✅ |
+| 8.3 | Anonymous updates are refused | `PATCH` an existing row | 0 rows affected; value unchanged on re-query | ✅ |
+| 8.4 | Anonymous deletes are refused | `DELETE` a row | 0 rows affected; row still present on re-query | ✅ |
+| 8.5 | No `service_role` key anywhere | `grep -r service_role .next/static/` | 0 matches | ✅ |
+| 8.6 | Credentials never reach the browser | `grep -r <project-ref> .next/static/` and page source | 0 matches — the client is server-only, so `NEXT_PUBLIC_` values are never inlined into client JS | ✅ |
 
 ## F6 — Responsive and accessible
 

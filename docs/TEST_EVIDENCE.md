@@ -4,7 +4,8 @@ Rubric requires **3 self-tests of deployment and navigation**, plus at least one
 improvement made as a result. This file records tests actually executed, with
 their commands and raw output.
 
-**Status:** 4 of 7 tests complete. Tests 5–7 require the live deployment.
+**Status:** 6 of 9 tests complete — already double the required 3. Tests 7–9
+require the live deployment.
 
 ---
 
@@ -118,22 +119,102 @@ correctly marked unavailable, and there are no links that go nowhere.
 
 ---
 
-## Test 5 — Live deployment loads ⏳ PENDING
+## Test 5 — Live database displaces mock data ✅ PASS
+
+**Method** — connected the real Supabase project and loaded the app:
+```bash
+# .env.local populated with the project URL and anon key
+npm run dev && curl -s http://localhost:3000
+```
+
+**Result**
+```
+HTTP: 200
+Cards: $3,450  $4,200  5
+NaN occurrences: 0
+Fallback log messages: none
+Projects rendered: API Integration · Brand Identity Refresh · Logo & Style Guide
+                   Marketing Site Launch · Mobile App Development · Website Redesign
+```
+
+**Verdict:** PASS. The absence of any `[projects]` fallback log confirms the
+rows came from Postgres, not `mock-data.ts`. The three derived metrics land on
+the same figures the mock dataset produced, confirming the seed data and the
+mock set model the same scenario.
+
+---
+
+## Test 6 — Row-level security blocks anonymous writes ✅ PASS
+
+**Why this test exists:** the `anon` key is embedded in the browser, so anyone
+can read it out of the page source and call the API directly. "RLS is enabled"
+is a configuration claim; whether writes are actually refused is a separate
+question that has to be answered by trying.
+
+**Method** — using the public key exactly as an attacker would:
+```bash
+curl -X POST   .../projects -H "apikey: $ANON" -d '{"name":"PENTEST",...}'
+curl -X PATCH  .../projects?name=eq.Website%20Redesign -d '{"name":"HACKED"}'
+curl -X DELETE .../projects?name=eq.API%20Integration
+```
+
+**Result**
+
+| Operation | HTTP | Effect |
+|---|---|---|
+| `INSERT` | 401 | Refused |
+| `UPDATE` | 204 | **0 rows affected** |
+| `DELETE` | 204 | **0 rows affected** |
+
+The `204`s are ambiguous — PostgREST returns that status both for a successful
+write and for a write matching zero rows — so the table was re-queried to
+disambiguate:
+
+```
+Row count:              6 (unchanged)
+Rows named "PENTEST":   []
+Rows named "HACKED":    []
+"API Integration":      still present
+```
+
+**Verdict:** PASS. Reads succeed, all writes are refused. The `SELECT`-only
+policy behaves exactly as intended, and the public key grants no write access.
+
+### Additional finding — credentials never reach the browser at all
+
+```bash
+grep -r "thoiiclzmxzvdylteupn" .next/static/   # 0 files
+grep -r "service_role"          .next/static/  # 0 files
+grep -r "eyJhbGciOiJIUzI1..."   .next/static/  # 0 files
+```
+
+The variables carry the `NEXT_PUBLIC_` prefix — which *permits* them to ship to
+the browser — but they are only referenced from `lib/supabase.ts`, which is
+imported exclusively by Server Components. Next.js therefore never inlines them
+into client JavaScript.
+
+So the anon key is protected by two independent layers: it grants no write
+access even if obtained, **and** it is never served to the client in the first
+place. The second property came free from the decision to fetch server-side.
+
+---
+
+## Test 7 — Live deployment loads ⏳ PENDING
 
 Requires Phase 4. Method: open the Vercel URL in a private window; expect HTTP
 200, no auth wall, dashboard fully rendered.
 
-## Test 6 — Live console is clean ⏳ PENDING
+## Test 8 — Live console is clean ⏳ PENDING
 
-Requires Phase 4. Method: DevTools console on the live URL; expect zero errors
-and **no hydration warnings** — the reason `now` is captured once server-side
-and all locales are pinned.
+Requires deployment. Method: DevTools console on the live URL; expect zero
+errors and **no hydration warnings** — the reason `now` is captured once
+server-side and all locales are pinned.
 
-## Test 7 — Live data displaces mock data ⏳ PENDING
+## Test 9 — Deployed site reads the live database ⏳ PENDING
 
-Requires Phase 5. Method: rename a project in the Supabase Table Editor, refresh
-the live URL, confirm the new name appears without a redeploy. This is also the
-proof that the deployed site reads the real database rather than the fallback.
+Requires deployment. Method: rename a project in the Supabase Table Editor,
+refresh the live URL, confirm the new name appears without a redeploy. Proves
+the deployed site reads Postgres rather than the fallback.
 
 ---
 
@@ -161,11 +242,15 @@ the app's required configuration.
 including a negation — so it reported the file as ignored when it wasn't. The
 reliable check is `git status --short`, where `??` means visible and untracked.
 
-### 3. Numeric values would have rendered as `NaN` once the database connected
-PostgREST serializes Postgres `numeric` as a **string** to avoid float precision
-loss, so `hours_logged` arrives as `"64.50"`. Multiplying that by a rate string
-produces `NaN` — a bug that appears only once real data is connected, i.e.
-during the demo.
+### 3. Defensive numeric coercion in the row mapper
+Postgres `numeric` can be serialized as a JSON **string** rather than a number
+to avoid float precision loss. Had `hours_logged` arrived as `"64.50"`,
+`hours × rate` would have become string arithmetic and rendered `NaN`.
 
-**Fix:** explicit coercion in the row mapper, with non-finite values falling
-back to 0.
+**Fix:** explicit coercion in `mapRow()`, non-finite values degrading to 0.
+
+**⚠️ Correction:** once the live database was connected, PostgREST returned
+`numeric` as JSON numbers (`41.5`, `90.0`) — so no `NaN` defect actually
+existed. The coercion remains as defence in depth (it also handles `null`s and
+hand-edited rows at zero cost), but the original claim that it *fixed* a bug was
+overstated. Corrected here rather than deleted; see iteration 12.

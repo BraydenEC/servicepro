@@ -44,11 +44,15 @@ const VALID_STATUSES: ProjectStatus[] = [
 ];
 
 /*
-  PostgREST serializes Postgres `numeric` as a STRING, not a number, to avoid
-  the precision loss of IEEE-754 floats. So hours_logged arrives as "64.50".
-  Without coercion, `hours * rate` becomes string arithmetic and the value
-  column silently renders NaN — the kind of bug that only appears once real
-  data is connected, which would be during the demo.
+  Defence in depth for numeric columns.
+
+  Verified against this project's live database: PostgREST returns `numeric` as
+  JSON numbers (41.5, 90.0). But `numeric` is also legitimately serialized as a
+  STRING in some configurations, to avoid IEEE-754 precision loss — and string
+  arithmetic would render the value column as NaN rather than failing loudly.
+
+  Coercing costs nothing and additionally covers nulls and hand-edited rows, so
+  it stays. It is a guard, not a fix for an observed bug.
 */
 function toNumber(value: number | string | null | undefined): number {
   if (value === null || value === undefined) return 0;

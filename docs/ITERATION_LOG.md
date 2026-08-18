@@ -84,15 +84,25 @@ shape, since nothing signals it.
 **Bonus:** this is also required for Phase 5, so database edits appear on
 refresh instead of being cached from the last build.
 
-### 8. Currency would have rendered `NaN` the moment the database connected
-**Found by:** reading the PostgREST serialization contract while writing the row
-mapper.
-**Problem:** Postgres `numeric` is serialized as a **string**, not a number, to
-avoid float precision loss. `hours_logged` arrives as `"64.50"`, so
-`hours × rate` becomes string arithmetic → `NaN`. This would not have appeared
-in any mock-data test — only once real data was connected, i.e. during the demo.
-**Change:** explicit numeric coercion in `mapRow()`, with non-finite values
-degrading to 0.
+### 8. Defensive numeric coercion added to the row mapper
+**Found by:** considering how PostgREST serializes Postgres `numeric` while
+writing the row mapper.
+**Concern:** `numeric` columns can be serialized as JSON **strings** rather than
+numbers to avoid float precision loss. If `hours_logged` arrived as `"64.50"`,
+then `hours × rate` would become string arithmetic and render `NaN` — a fault
+invisible to every mock-data test, appearing only once the real database was
+connected.
+**Change:** explicit coercion in `mapRow()`, with non-finite values degrading
+to 0.
+
+**⚠️ Correction — this claim was overstated.** When the live database was
+connected in the next stage, PostgREST returned `numeric` as JSON **numbers**
+(`41.5`, `90.0`), not strings. No `NaN` bug existed to fix. The coercion is
+genuine defence in depth — it costs nothing and covers hand-edited rows,
+`null`s, and other PostgREST configurations — but it did **not** prevent a live
+defect, and the original entry claimed it did. Recorded rather than deleted,
+because an evidence log that quietly edits out its own errors is worth less
+than one that shows them. See iteration 12.
 
 ### 9. Unknown status values could crash the page
 **Found by:** considering what a hand-edited row in the Supabase Table Editor
@@ -121,7 +131,39 @@ back to ✅ with the raw output recorded in `TEST_EVIDENCE.md`.
 
 ---
 
+---
+
+## Database integration stage
+
+### 12. An unverified claim had been written into the evidence as fact
+**Found by:** inspecting the actual JSON returned by the live database, rather
+than trusting the prediction made when the mapper was written.
+**Problem:** iteration 8 asserted that PostgREST serializes `numeric` as a
+string and that this *would* have produced `NaN`. The live response returned
+plain JSON numbers. The defensive code was reasonable; the stated justification
+was not true for this project.
+**Change:** iteration 8 amended in place with a visible correction rather than
+being rewritten, and the same claim corrected in `TEST_EVIDENCE.md`,
+`HANDOFF.md`, and the source comment in `lib/projects.ts`.
+**Lesson:** "this would have broken" is a claim requiring evidence, exactly like
+any other. Predicting a failure mode is not the same as observing one.
+
+### 13. Row-level security verified by attempting to break it
+**Found by:** deciding that "RLS is enabled" is a configuration claim, not a
+security result.
+**Method:** using the public `anon` key exactly as a browser would, attempted
+`INSERT`, `UPDATE`, and `DELETE` against the live table.
+**Result:** `INSERT` → HTTP 401. `UPDATE` and `DELETE` → HTTP 204, which is
+ambiguous: PostgREST returns it both for success and for matching zero rows.
+Re-queried the table to disambiguate — all 6 original rows intact, no injected
+row, no renamed row, no deleted row. Writes are genuinely blocked.
+**Change:** none needed — but the check turned an assumption into evidence, and
+the ambiguous 204 was worth chasing rather than accepting at face value.
+Recorded as Test 8.
+
+---
+
 ## Pending
 
-Iterations 12+ will come from the live-deployment tests (5–7 in
-`TEST_EVIDENCE.md`), which need the Vercel and Supabase environments.
+Iterations 14+ will come from the live-deployment tests (5–7 in
+`TEST_EVIDENCE.md`), which need the Vercel environment.

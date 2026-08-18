@@ -25,7 +25,7 @@
 | UX implementation note | — | ✅ | [`IMPLEMENTATION_NOTE.md`](IMPLEMENTATION_NOTE.md) |
 | Product spec + acceptance criteria | testable | ✅ ~50 criteria | [`ACCEPTANCE_CRITERIA.md`](ACCEPTANCE_CRITERIA.md) |
 | Architecture sketch + stack table | — | ✅ 3 diagrams | [`ARCHITECTURE.md`](ARCHITECTURE.md) |
-| GitHub commits | 5 | ✅ **13** | repo |
+| GitHub commits | 5 | ✅ **15** | repo |
 | Vercel deployments | 2 | ✅ **7** | Vercel dashboard |
 | Supabase evidence | table/data | ✅ verified live | [`TEST_EVIDENCE.md`](TEST_EVIDENCE.md) Test 8 |
 | Coding-agent prompt log | 5 | ✅ **5** | [`PROMPT_LOG.md`](PROMPT_LOG.md) |
@@ -42,7 +42,7 @@
 - [ ] Supabase → **Table Editor** → `projects` showing 6 rows
 - [ ] Supabase → **Authentication → Policies** showing the read-only policy
 - [ ] Vercel → **Deployments** showing 7 successful builds
-- [ ] GitHub → **Commits** showing 13
+- [ ] GitHub → **Commits** showing 15
 - [ ] Live site at **desktop** width
 - [ ] Live site at **mobile** width (DevTools device toolbar, 375px)
 - [ ] Live site with **console open**, showing no errors

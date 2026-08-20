@@ -32,8 +32,14 @@ to prevent is a *plausible but wrong* number, and that is exactly where model
 quality shows.
 
 **`effort: "low"`** — the task is well-specified with a fixed output schema, so
-deep reasoning buys nothing. Low effort keeps the round trip near a second,
-which matters for a form a user is waiting on and for a live demo.
+deep reasoning buys little. Measured end-to-end latency at this setting is
+**~7 seconds**, not the sub-second figure originally assumed when this was
+written; thinking is on by default on Opus 5 and low effort reduces rather than
+removes it. The form shows an explicit "Extracting…" state because of this.
+
+Seven seconds is an acceptable trade for replacing roughly two minutes of
+manual transcription, and correctness is what this module is graded on — but
+the assumption was wrong and is corrected here rather than left standing.
 
 **Structured outputs rather than free-text JSON** — the schema is enforced by
 the API, so a malformed response is impossible rather than merely unlikely. The
@@ -108,7 +114,7 @@ It is documented here only so the two paths can be compared:
 | Infers a readable project name | Yes | Approximates from nearby nouns |
 | Invents missing values | No (instructed) | No (structurally cannot) |
 | Cost | ~$0.01 / run | Free |
-| Latency | ~1s | <1ms |
+| Latency | ~7s (measured) | <1ms |
 
 Both are held to the same contract: what cannot be found is returned as `null`
 and named in the confidence note. The response always states which one ran.

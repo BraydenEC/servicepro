@@ -1,19 +1,24 @@
 /*
   Sidebar navigation.
 
-  Resolves a direct contradiction in the handoff document: §2.1 specifies a
-  four-item side navigation, while §4 forbids any routing beyond "/".
+  Week 0 shipped this as purely presentational: one route existed, so every
+  item was an inert <span> rather than an href="#" link that goes nowhere.
 
-  Resolution — the sidebar is presentational. "Dashboard" renders in its
-  active state; the other three are inert <span>s, not <a>s, so there are no
-  href="#" dead links for a grader to click into nothing. They are dimmed and
-  marked aria-disabled, which keeps the UI honest rather than baiting a click.
+  Week 1 adds a second real route. Items with an `href` are now genuine links
+  with an active state driven by the current pathname; the rest keep the
+  original inert treatment. The rule is unchanged — a link exists only if it
+  leads somewhere.
 */
+
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 type NavItem = {
   label: string;
   icon: React.ReactNode;
-  active?: boolean;
+  href?: string;
 };
 
 /* Inline SVGs rather than an icon package: zero dependencies, zero network
@@ -32,13 +37,23 @@ const iconProps = {
 const NAV_ITEMS: NavItem[] = [
   {
     label: "Dashboard",
-    active: true,
+    href: "/",
     icon: (
       <svg {...iconProps}>
         <rect x="3" y="3" width="7" height="9" rx="1.5" />
         <rect x="14" y="3" width="7" height="5" rx="1.5" />
         <rect x="14" y="12" width="7" height="9" rx="1.5" />
         <rect x="3" y="16" width="7" height="5" rx="1.5" />
+      </svg>
+    ),
+  },
+  {
+    label: "Core",
+    href: "/core",
+    icon: (
+      <svg {...iconProps}>
+        <circle cx="12" cy="12" r="3.25" />
+        <path d="M12 2.75v3M12 18.25v3M21.25 12h-3M5.75 12h-3M18.36 5.64l-2.12 2.12M7.76 16.24l-2.12 2.12M18.36 18.36l-2.12-2.12M7.76 7.76 5.64 5.64" />
       </svg>
     ),
   },
@@ -71,6 +86,8 @@ const NAV_ITEMS: NavItem[] = [
 ];
 
 export default function Sidebar() {
+  const pathname = usePathname();
+
   return (
     <aside className="border-hairline bg-surface flex w-16 shrink-0 flex-col border-r md:w-60">
       {/* Brand */}
@@ -85,15 +102,20 @@ export default function Sidebar() {
 
       <nav aria-label="Main" className="flex flex-col gap-1 px-2 py-4 md:px-3">
         {NAV_ITEMS.map((item) =>
-          item.active ? (
-            <span
+          item.href ? (
+            <Link
               key={item.label}
-              aria-current="page"
-              className="bg-accent/10 text-accent-soft flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium"
+              href={item.href}
+              aria-current={pathname === item.href ? "page" : undefined}
+              className={`focus-visible:ring-accent flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:outline-none ${
+                pathname === item.href
+                  ? "bg-accent/10 text-accent-soft"
+                  : "text-ink-muted hover:bg-raised/50 hover:text-ink"
+              }`}
             >
               {item.icon}
               <span className="hidden md:inline">{item.label}</span>
-            </span>
+            </Link>
           ) : (
             <span
               key={item.label}

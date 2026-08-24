@@ -1,6 +1,8 @@
+import CorePreview from "@/components/core/CorePreview";
 import ProjectsTable from "@/components/ProjectsTable";
 import Sidebar from "@/components/Sidebar";
 import SummaryCards from "@/components/SummaryCards";
+import { getSavedOutputs } from "@/lib/core/saved";
 import { getDashboardData } from "@/lib/projects";
 
 /*
@@ -32,7 +34,20 @@ export const dynamic = "force-dynamic";
 
 export default async function Home() {
   const now = new Date();
-  const { projects, metrics, source } = await getDashboardData(now);
+
+  /*
+    Both reads are independent, so they run concurrently rather than in
+    sequence — awaiting them one after the other would add the core query's
+    latency to every dashboard render for no reason.
+
+    getSavedOutputs never throws: an unconfigured or unreachable database
+    returns an empty list, which the preview renders as its empty state. The
+    dashboard cannot be broken by the core module failing.
+  */
+  const [{ projects, metrics, source }, savedOutputs] = await Promise.all([
+    getDashboardData(now),
+    getSavedOutputs(4),
+  ]);
 
   return (
     /*
@@ -71,6 +86,7 @@ export default async function Home() {
 
             <SummaryCards metrics={metrics} />
             <ProjectsTable projects={projects} now={now} />
+            <CorePreview outputs={savedOutputs} now={now} />
           </div>
         </div>
       </main>

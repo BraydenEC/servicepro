@@ -1,7 +1,8 @@
 # 🧪 Week 1 Test Evidence — Generative Core
 
 **Requirement:** 3 self-tests. **Delivered:** 3 test runs on each extraction
-path (6 runs), plus validation and resilience checks.
+path (6 runs), plus validation, resilience, and production verification
+(**10 tests total**).
 
 **Live page:** https://servicepro-orpin.vercel.app/core
 
@@ -148,3 +149,52 @@ captured phrase. The same brief now yields `"Redesign"`.
 
 **Verification:** re-ran Test 1; committed; redeployed. This satisfies Gate 3 —
 *tests documented, bug fixed, redeploy completed*.
+
+---
+
+## Test 10 — Production runs the model ✅ PASS
+
+**Date:** 2026-08-27 · **Endpoint:** `POST /api/core/extract` on the live site
+
+The same brief run against production before and after `ANTHROPIC_API_KEY` was
+added in Vercel and the site redeployed without build cache. Running the
+identical input across the change makes the difference attributable rather than
+assumed.
+
+**Input**
+```
+Following up on the checkout redesign for Kestrel Digital. We agreed 110 an
+hour, I have logged 27.5 hours. Needs to be done by the end of next month.
+```
+
+| Field | Before — `heuristic` | After — `model` |
+|---|---|---|
+| project_name | `Checkout Redesign` | `Checkout Redesign` |
+| client | `Kestrel Digital. We` ✗ | **`Kestrel Digital`** ✓ |
+| hourly_rate | `110` | `110` |
+| hours_logged | `27.5` | `27.5` |
+| deadline | **`None`** ✗ | **`2026-09-30`** ✓ |
+| response time | 0.57 s | 3.44 s |
+
+Confidence note returned by the model:
+> "Deadline was inferred from 'end of next month' relative to today
+> (2026-08-27) as 2026-09-30, and status was defaulted to in_progress since the
+> brief gives no delivery or invoicing signal."
+
+**Verdict: PASS.** Two distinct failures fixed at once — the relative date that
+pattern matching cannot reach, and a client name where the regex ran straight
+through a sentence boundary and captured the following word.
+
+**Latency is itself evidence.** The heuristic answers in roughly half a second
+and the model in three to four, so response time distinguishes the two paths
+without reading the body at all.
+
+### One sample was not enough
+
+The first production check after the redeploy still returned `heuristic`; a
+retry moments later returned `model`. Both readings were genuine — the first
+request landed on an instance still serving the previous build.
+
+Recorded because this is precisely the situation where a single check yields a
+confident wrong answer in either direction. During a rollout, verification needs
+more than one sample.

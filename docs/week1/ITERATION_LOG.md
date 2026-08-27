@@ -75,8 +75,20 @@ mock data for six deployments while looking perfect. Same root cause: correct
 code, unconfigured environment. Same reason it was catchable: the response
 states which path produced it.
 
-**Change:** `ANTHROPIC_API_KEY` added in Vercel, redeployed with build cache
-disabled.
+**Change:** `ANTHROPIC_API_KEY` added in Vercel across all three environments,
+redeployed with build cache disabled.
+
+**Resolved 2026-08-27 and verified in production:** the same brief that
+previously returned `deadline: null` now returns `2026-09-30`, and
+`client: "Kestrel Digital. We"` — where the regex ran through a sentence
+boundary — is now `"Kestrel Digital"`. Response time moved from 0.57 s to
+3.44 s, so latency alone distinguishes the two paths. Recorded as Test 10.
+
+**A smaller lesson inside the fix:** adding the variable was not sufficient, and
+neither was a single verification. The first post-deploy check still reported
+`heuristic` because the request hit an instance serving the previous build; a
+retry reported `model`. One sample would have produced the wrong conclusion in
+either direction.
 
 **Lesson, now twice over: a deploy is not a configuration.** Pushing code and
 having it *run as intended* are separate events, and only the second one is

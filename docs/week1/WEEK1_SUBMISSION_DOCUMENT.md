@@ -226,7 +226,7 @@ The reference brief extracted `"Up On The Redesign"` — the extractor captured 
 ## 3. Latency was assumed, not measured
 Documented as "~1 second"; measured **~7.3 s**. Thinking is on by default on Opus 5 and low effort reduces rather than removes it. Corrected in place across two documents rather than quietly edited.
 
-## 4. ⭐ Production was not running the generative core
+## 4. ⭐ Production was not running the generative core — found, then fixed
 Querying the live API — rather than trusting that deployment implied configuration — returned:
 
 ```
@@ -238,7 +238,11 @@ The entire point of Week 1 was inactive on the graded URL. The key worked locall
 
 **This is Week 0's failure repeating exactly.** That week, production served mock data for six deployments while looking perfect. Same root cause: correct code, unconfigured environment. Same reason it was catchable: the response states which path produced it.
 
+**Resolved and verified in production (2026-08-27).** The key was added in Vercel across all three environments and the site redeployed with build cache disabled. The same brief that previously returned `deadline: null` now returns `2026-09-30`, and `client: "Kestrel Digital. We"` — where the regex ran through a sentence boundary — is now `"Kestrel Digital"`. Response time moved from 0.57 s to 3.44 s, so latency alone distinguishes the two paths.
+
 **Lesson, now twice over: a deploy is not a configuration.** Pushing code and having it run as intended are separate events, and only the second is worth anything.
+
+A smaller lesson sat inside the fix: adding the variable was not sufficient, and neither was a single verification. The first post-deploy check still reported `heuristic`, because the request hit an instance still serving the previous build; a retry reported `model`. One sample would have produced the wrong conclusion.
 
 ## 5. A required feature was read as satisfied when it wasn't
 "Dashboard preview" was assumed covered by the saved list on `/core`. Re-reading the spec against the actual routes showed `app/page.tsx` never referenced the core module at all. Built `CorePreview`.

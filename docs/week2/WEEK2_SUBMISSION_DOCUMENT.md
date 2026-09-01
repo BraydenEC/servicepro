@@ -74,9 +74,9 @@ Three divergences from the wireframe:
 | C2 | Five benchmarks render | 5 cards, each with a source | ✅ PASS |
 | C3 | Eight or more competitors | ≥ 8 rows | ✅ PASS (11) |
 | C4 | Substitutes represented | ≥ 3 | ✅ PASS (3) |
-| C5 | Filter narrows results | Count updates correctly | ✅ PASS |
-| C6 | Search matches name and finding | Case-insensitive | ✅ PASS |
-| C7 | Filter + search compose | Intersection, not union | ✅ PASS |
+| C5 | Filter narrows results | Count updates correctly | ✅ PASS (executed) |
+| C6 | Search matches name and finding | Case-insensitive | ✅ PASS (executed) |
+| C7 | Filter + search compose | Intersection, not union | ✅ PASS (17/17 executed) |
 | C8 | Empty result handled | Explanatory state, not blank | ✅ PASS |
 | C9 | Filtering requires no reload | Zero network requests | ✅ PASS |
 | C10 | Every row shows confidence | No unmarked claim | ✅ PASS (28 badges) |
@@ -125,7 +125,7 @@ Six software tests executed with raw output, plus the required human validation 
 |---|---|---|
 | 1 | **Every cited source resolves** | ✅ 9/9 return HTTP 200 |
 | 2 | Every claim carries a confidence level | ✅ 28 badges, 9 unsourced markers |
-| 3 | Filter and search compose as intersection | ✅ Verified across 6 combinations |
+| 3 | Filter and search compose as intersection | ✅ **17/17 assertions executed** via `npm run test:filters` |
 | 4 | Extractor refuses to overstate confidence | ✅ Opinion → `estimated`, no invented citation |
 | 5 | Validation and the honesty constraint | ✅ 4 rejections + verified-without-source refused |
 | 6 | Degrades with no model key | ✅ Falls back, marks `reported` not `verified` |

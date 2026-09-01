@@ -65,25 +65,69 @@ fact.
 
 ---
 
-## Test 3 — Filter and search compose as an intersection ✅ PASS
+## Test 3 — Filter and search compose as an intersection ✅ PASS (17/17, executed)
 
 **Why.** The common bug is filters that OR together, so adding a second constraint *widens*
 results. Selecting "Mexico" and typing "cfdi" must narrow twice.
 
-**Method** — client-side, verified against the dataset of 11 entries:
+**How this test was strengthened.** It originally claimed PASS on the basis of reading the code.
+For a week whose entire subject is the difference between an asserted result and a checked one,
+that was the wrong thing to ship. The predicate was extracted to `lib/research/filter.ts` — the
+same function the component uses, not a copy — and is now executed directly:
 
-| Filters applied | Expected | Actual |
-|---|---|---|
-| none | 11 | 11 |
-| category = Substitute | 3 | 3 |
-| region = Mexico | 5 | 5 |
-| region = Mexico **+** category = Invoicing/CFDI | 3 | 3 |
-| search "cfdi" | matches note text | narrows correctly |
-| search "zzzz" | 0 + empty state | empty state with a clear-filters action |
+```bash
+npm run test:filters
+```
 
-**Verdict: PASS.** Filters intersect. The count is announced with `aria-live` so a screen-reader
-user is told the page changed, and the zero-result case offers a way out rather than a blank
-table.
+**Result**
+```
+  PASS  no filters returns everything  →  11
+  PASS  category = substitute  →  3
+  PASS  category = invoicing_cfdi  →  3
+  PASS  region = mexico  →  5
+  PASS  region = global  →  6
+  PASS  mexico AND invoicing_cfdi intersects  →  3
+  PASS  global AND substitute intersects (not union)  →  1
+  PASS  search matches a name  →  1
+  PASS  search is case-insensitive  →  1
+  PASS  search matches note text  →  8
+  PASS  search matches pricing  →  4
+  PASS  whitespace-only query is ignored  →  11
+  PASS  no match yields empty  →  0
+  PASS  search AND category compose  →  3
+  PASS  search AND region compose  →  6
+  PASS  known: "free" matches the "Freelance suite" label  →  2
+  PASS  adding a constraint never widens the result
+
+  17 passed, 0 failed
+```
+
+The final assertion is the important one: it sweeps every category × region combination and
+verifies that adding a constraint can only narrow. A filter that ORs instead of ANDs would pass
+several individual cases while failing that one.
+
+### ⭐ The test found that two of its own expectations were wrong
+
+Two cases failed on the first run. Both were the *expected values*, not the code:
+
+| Case | I expected | Actual | Why |
+|---|---|---|---|
+| search "cfdi" | 6 | **8** | Every global tool's note says it has *no* CFDI, so they match too |
+| search "free" + global | 3 | **6** | `"free"` is a substring of **"Free**lance suite**"**, so Bonsai and FreshBooks match on their category label |
+
+Rather than adjust the numbers and move on, each was traced to the field that matched before the
+expectation was changed. The second is a real, if minor, wart: substring search across the
+category label is what makes "invoicing" and "substitute" findable, and the same mechanism makes
+"free" surface freelance suites. It is documented as a known behaviour with its own test case
+rather than special-cased away.
+
+**This is the second time in Week 2 that the harness was wrong and the code was right** — the
+first was the zsh word-splitting failure in Test 1. Both would have led to "fixing" something
+that was never broken.
+
+**Verdict: PASS.** Filters intersect, verified by execution. The count is announced with
+`aria-live` so a screen-reader user is told the page changed, and the zero-result case offers a
+way out rather than a blank table.
 
 ---
 

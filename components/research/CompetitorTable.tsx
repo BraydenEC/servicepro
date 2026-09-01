@@ -2,8 +2,10 @@
 
 import { useMemo, useState } from "react";
 import SourceBadge from "@/components/research/SourceBadge";
+import { applyFilters } from "@/lib/research/filter";
+import type { CategoryFilter, RegionFilter } from "@/lib/research/filter";
 import { CATEGORY_LABEL } from "@/types/research";
-import type { PlayerCategory, Player, Region } from "@/types/research";
+import type { Player } from "@/types/research";
 
 /*
   Competitors and substitutes, with filter and search.
@@ -17,9 +19,6 @@ import type { PlayerCategory, Player, Region } from "@/types/research";
   sidebar, because the honest competitive picture is that the incumbent is a
   spreadsheet. Segregating them would flatter the analysis.
 */
-
-type CategoryFilter = PlayerCategory | "all";
-type RegionFilter = Region | "all";
 
 const CATEGORY_OPTIONS: { value: CategoryFilter; label: string }[] = [
   { value: "all", label: "All categories" },
@@ -62,20 +61,10 @@ export default function CompetitorTable({ players }: { players: Player[] }) {
     typing "cfdi" must narrow twice. Search covers the note as well as the
     name, because the note is where the actual finding lives.
   */
-  const visible = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    return players.filter((p) => {
-      if (category !== "all" && p.category !== category) return false;
-      if (region !== "all" && p.region !== region) return false;
-      if (!q) return true;
-      return (
-        p.name.toLowerCase().includes(q) ||
-        p.note.toLowerCase().includes(q) ||
-        p.pricing.toLowerCase().includes(q) ||
-        CATEGORY_LABEL[p.category].toLowerCase().includes(q)
-      );
-    });
-  }, [players, query, category, region]);
+  const visible = useMemo(
+    () => applyFilters(players, { query, category, region }),
+    [players, query, category, region],
+  );
 
   const isFiltered =
     query.trim() !== "" || category !== "all" || region !== "all";

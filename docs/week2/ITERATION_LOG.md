@@ -112,6 +112,39 @@ than provenance.
 
 ---
 
+### 11. An acceptance criterion claimed PASS without having been executed
+
+Criteria C5–C9 asserted that filter and search compose as an intersection. That claim came from
+reading the code, not from running it. For a week whose entire subject is the difference between
+a plausible assertion and a checked one, shipping an untested PASS was the wrong call.
+
+**Change:** the predicate was extracted to `lib/research/filter.ts` — the same function the
+component imports, deliberately not a copy, since testing a copy would test the copy — and
+`scripts/test-filters.ts` now executes 17 assertions against the real dataset. A resolve hook in
+`scripts/alias-loader.mjs` lets plain `node` import project modules using the `@/` alias, so no
+test framework was added. Three weeks, one dependency total, still.
+
+### 12. ⭐ The new test found that two of its own expectations were wrong
+
+Two cases failed on the first run, and in both the code was right:
+
+- **search "cfdi" returned 8, not 6.** Every global tool's note states that it has *no* CFDI, so
+  they match the search too. The expectation had been counted by hand and counted wrong.
+- **search "free" + global returned 6, not 3.** `"free"` is a substring of `"Freelance suite"`,
+  so Bonsai and FreshBooks match on their category label rather than on price.
+
+Each was traced to the specific field that matched before any number was changed. The second is a
+genuine if minor wart — substring search across the category label is what makes "invoicing" and
+"substitute" findable, and the same mechanism produces this. It is now documented with its own
+test case rather than special-cased away.
+
+**This is the second time in Week 2 that the harness was wrong and the code was right**, after
+the zsh word-splitting failure in iteration 9. Both would have led to "fixing" something that was
+never broken. The pattern is worth naming: when a check disagrees with the code, the check is a
+suspect too.
+
+---
+
 ## Outstanding
 
 The `research_records` migration has not been run against the live database, so the save round

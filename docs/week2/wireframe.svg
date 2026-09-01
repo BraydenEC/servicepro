@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1180" width="900" height="1180" font-family="ui-sans-serif, system-ui, sans-serif">
+  <rect width="900" height="1180" fill="#020617"/>
+  <rect x="0" y="0" width="150" height="1180" fill="#0f172a" stroke="#1e293b"/>
+  <text x="20" y="40" fill="#f1f5f9" font-size="15" font-weight="600">ServicePro</text>
+  <rect x="12" y="62" width="126" height="30" rx="7" fill="#0f172a"/><text x="24" y="82" fill="#64748b" font-size="12">Dashboard</text>
+  <rect x="12" y="96" width="126" height="30" rx="7" fill="#0f172a"/><text x="24" y="116" fill="#64748b" font-size="12">Core</text>
+  <rect x="12" y="130" width="126" height="30" rx="7" fill="#6366f1" fill-opacity="0.15"/><text x="24" y="150" fill="#818cf8" font-size="12">Research</text>
+
+  <text x="180" y="46" fill="#f1f5f9" font-size="20" font-weight="600">Research &amp; Benchmarking</text>
+  <text x="180" y="68" fill="#94a3b8" font-size="11">Testing the assumption the product was built on</text>
+
+  <rect x="180" y="86" width="690" height="76" rx="10" fill="#6366f1" fill-opacity="0.06" stroke="#6366f1" stroke-opacity="0.3"/>
+  <text x="200" y="116" fill="#f1f5f9" font-size="14" font-weight="600">Headline finding — computed from the dataset</text>
+  <text x="200" y="140" fill="#94a3b8" font-size="11">Of N surveyed: X track projects, Y issue CFDI, Z do both</text>
+
+  <text x="180" y="196" fill="#f1f5f9" font-size="14" font-weight="600">Five global benchmarks</text>
+  <g fill="#0f172a" stroke="#1e293b">
+    <rect x="180" y="210" width="220" height="104" rx="10"/>
+    <rect x="415" y="210" width="220" height="104" rx="10"/>
+    <rect x="650" y="210" width="220" height="104" rx="10"/>
+  </g>
+  <text x="196" y="234" fill="#f1f5f9" font-size="12" font-weight="600">Product</text>
+  <text x="196" y="254" fill="#818cf8" font-size="10">What it proves</text>
+  <text x="196" y="274" fill="#94a3b8" font-size="9">Pricing, fetched + dated</text>
+  <rect x="196" y="286" width="52" height="16" rx="8" fill="#34d399" fill-opacity="0.15"/>
+  <text x="204" y="298" fill="#34d399" font-size="8">Verified</text>
+
+  <rect x="180" y="332" width="690" height="128" rx="10" fill="#0f172a" stroke="#1e293b"/>
+  <text x="200" y="358" fill="#f1f5f9" font-size="14" font-weight="600">Mexico localization — why a PDF is not an invoice</text>
+  <text x="200" y="382" fill="#94a3b8" font-size="11">CFDI 4.0 · issued via SAT · stamped by an authorized PAC</text>
+  <text x="200" y="402" fill="#94a3b8" font-size="11">Consequence: two systems by legal necessity, not disorganization</text>
+  <rect x="200" y="416" width="60" height="16" rx="8" fill="#38bdf8" fill-opacity="0.15"/>
+  <text x="208" y="428" fill="#38bdf8" font-size="8">Reported</text>
+
+  <text x="180" y="492" fill="#f1f5f9" font-size="14" font-weight="600">Competitors &amp; substitutes</text>
+  <rect x="180" y="506" width="380" height="30" rx="7" fill="#1e293b"/><text x="194" y="526" fill="#64748b" font-size="11">Search…</text>
+  <rect x="572" y="506" width="140" height="30" rx="7" fill="#1e293b"/><text x="586" y="526" fill="#64748b" font-size="11">Category ▾</text>
+  <rect x="724" y="506" width="146" height="30" rx="7" fill="#1e293b"/><text x="738" y="526" fill="#64748b" font-size="11">Region ▾</text>
+  <rect x="180" y="546" width="690" height="180" rx="10" fill="#0f172a" stroke="#1e293b"/>
+  <rect x="180" y="546" width="690" height="30" fill="#1e293b" fill-opacity="0.5"/>
+  <text x="196" y="566" fill="#94a3b8" font-size="10">PRODUCT</text>
+  <text x="420" y="566" fill="#94a3b8" font-size="10">PRICING</text>
+  <text x="560" y="566" fill="#94a3b8" font-size="10">CAPABILITIES</text>
+  <text x="740" y="566" fill="#94a3b8" font-size="10">SOURCE</text>
+  <g stroke="#1e293b"><line x1="180" y1="606" x2="870" y2="606"/><line x1="180" y1="646" x2="870" y2="646"/><line x1="180" y1="686" x2="870" y2="686"/></g>
+  <text x="196" y="594" fill="#f1f5f9" font-size="11">Name · category · region</text>
+  <text x="560" y="594" fill="#34d399" font-size="10">✓ Projects  — CFDI</text>
+
+  <text x="180" y="758" fill="#f1f5f9" font-size="14" font-weight="600">Risk map — likelihood × impact</text>
+  <g fill="#1e293b" fill-opacity="0.4" stroke="#1e293b">
+    <rect x="240" y="772" width="120" height="60" rx="7"/><rect x="368" y="772" width="120" height="60" rx="7"/>
+    <rect x="496" y="772" width="120" height="60" rx="7" fill="#fb7185" fill-opacity="0.12"/>
+    <rect x="240" y="840" width="120" height="60" rx="7"/><rect x="368" y="840" width="120" height="60" rx="7"/><rect x="496" y="840" width="120" height="60" rx="7"/>
+    <rect x="240" y="908" width="120" height="60" rx="7"/><rect x="368" y="908" width="120" height="60" rx="7"/><rect x="496" y="908" width="120" height="60" rx="7"/>
+  </g>
+  <text x="190" y="806" fill="#64748b" font-size="10">High</text>
+  <text x="190" y="874" fill="#64748b" font-size="10">Med</text>
+  <text x="190" y="942" fill="#64748b" font-size="10">Low</text>
+  <text x="512" y="800" fill="#fb7185" font-size="9">Mexican vendor adds</text>
+  <text x="512" y="812" fill="#fb7185" font-size="9">project tracking</text>
+  <text x="380" y="990" fill="#64748b" font-size="10">Likelihood →</text>
+
+  <text x="180" y="1030" fill="#f1f5f9" font-size="14" font-weight="600">Research intake</text>
+  <rect x="180" y="1044" width="690" height="66" rx="10" fill="#0f172a" stroke="#1e293b"/>
+  <text x="196" y="1068" fill="#64748b" font-size="11">Paste a note about a competitor, price, or regulation…</text>
+  <rect x="196" y="1080" width="110" height="22" rx="6" fill="#6366f1"/>
+  <text x="212" y="1095" fill="#fff" font-size="10">Structure note</text>
+
+  <rect x="180" y="1124" width="690" height="36" rx="10" fill="#0f172a" stroke="#1e293b"/>
+  <text x="196" y="1147" fill="#94a3b8" font-size="11">Saved records — from Supabase, each with confidence + provenance</text>
+</svg>

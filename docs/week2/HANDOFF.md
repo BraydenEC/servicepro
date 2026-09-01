@@ -1,137 +1,134 @@
-# 🤝 Week 2 Handoff — end of Phase 2 (research)
+# 🤝 Handoff — end of Week 2, ready for Week 3
 
 **Last updated:** 2026-08-31
 **Project root:** `/Users/braydencredeur/Antigravity/Website/Dev/servicepro`
-**Plan:** `docs/week2/PLAN.md` · **Gate 1 packet:** `docs/week2/BUILD_DISCIPLINE_PACKET.md`
+**Live:** https://servicepro-orpin.vercel.app · `/` · `/core` · `/research`
 
 ---
 
 ## TL;DR
 
-**Gates 1 and Phase 2 are done.** The Build Discipline Packet was committed before any Week 2
-code exists, and the research is complete with every figure fetched from a primary source on
-2026-08-31 rather than recalled.
+**All Week 2 engineering is complete and deployed.** All eight required features, all six coding
+tasks, all four build gates on the code side. Six software tests documented.
 
-**Next action: Phase 3** — build the `/research` page shell with benchmark cards and the Mexico
-panel, then deploy early. Nothing is blocked. No new environment variables and no new
-dependencies are required this week.
+**Two things are outstanding, and neither can be done by an agent:**
+
+1. 🔴 **The human validation conversation** — a hard requirement. Template and interview script in
+   `VALIDATION_CONVERSATION.md`.
+2. 🟡 **The `research_records` migration** has not been run against the live database, so the save
+   round trip is unverified end to end.
 
 ```bash
 cd /Users/braydencredeur/Antigravity/Website/Dev/servicepro
-npm run dev     # → http://localhost:3000
+npm run dev     # → http://localhost:3000/research
 ```
 
 ---
 
-## What Phase 2 established
+## What Week 2 built
 
-The research supports the thesis **from both directions**, which is stronger than a one-sided
-argument:
-
-- **Five global tools** (Harvest, Bonsai, FreshBooks, Toggl, Clockify) — projects and time
-  tracking, PDF invoices, **zero CFDI support** on any pricing page.
-- **Three Mexican tools** (Alegra, Facturama, gigstack) — full CFDI with timbrado, **no project
-  or time tracking**. gigstack states the absence explicitly.
-
-So a Mexican freelancer runs two systems by legal necessity, not disorganization. Toggl phrases
-the gap itself: *"Generate and download PDF invoices."* In Mexico a PDF is a picture of a fiscal
-document, not a fiscal document.
-
-**This reframes the product.** Weeks 0–1 treated fragmentation as a discipline problem. It is a
-structural one, and that is a better problem to be solving. The Week 2 packet's problem statement
-already anticipated this; the research confirmed it.
-
----
-
-## ⚠️ The one thing that needs a human before submission
-
-**Everything in `RESEARCH_FINDINGS.md` §3 is marked `reported`, not `verified`.** Mexican tax
-claims come from tax-advisory and vendor blogs, not SAT primary documentation.
-
-Six specific claims for Brayden to spot-check:
-
-1. CFDI 4.0 mandatory since 2023-04-01, with 3.3 disabled
-2. The RESICO annual income threshold (~3.5M MXN)
-3. The 1.25% ISR withholding rate for personas morales paying RESICO personas físicas
-4. The 1%–2.5% RESICO ISR range
-5. Whether the CFDI 4.0 required-fields list is complete
-6. Whether anything changed in 2026 that these secondary sources missed
-
-A Mexican business professor will know this material cold. An incorrect CFDI claim is worse than
-a hedged one — which is why the schema lets a claim ship marked unverified.
-
----
-
-## Research discipline in force
-
-Do not relax these when building the seed data:
-
-| Rule | Why |
+| Required feature | Where |
 |---|---|
-| Every figure carries a source URL and `verified_on` | The only automated fabrication check is that a cited URL returns 200 |
-| Vendor pricing comes from the vendor's own page | Not from a comparison article, and not from memory |
-| **List price, not promotional price** | FreshBooks currently shows a 90%-off promo. Seed data records the list price ($23/$43/$70) and notes the promo |
-| Behavioral claims are `estimated` | The substitutes section is informed judgment, not sourced fact, and says so |
-| Model does not invent market facts | It may structure a note supplied to it — nothing more |
+| Research intake | `components/research/ResearchIntake.tsx` → `/api/research/extract` |
+| 5 global examples | `BenchmarkCards.tsx`, data in `lib/research/data.ts` |
+| Mexico localization | `MexicoPanel.tsx` |
+| 8+ competitors/substitutes | `CompetitorTable.tsx` — 11 entries |
+| Filter/search | Client-side, `useMemo`, in `CompetitorTable` |
+| Risk map | `RiskMap.tsx` — CSS grid + inline SVG |
+| Saved research output | `research_records` + `SavedResearch.tsx` |
+| Dashboard widget | `ResearchWidget.tsx` on `/` |
+
+**The finding:** of 11 products surveyed, 9 track projects, 4 issue CFDI, **0 do both**. Computed
+from the dataset at render time, so the headline cannot drift from the table beneath it.
 
 ---
 
-## Findings worth preserving in the build
+## Principles now established across three weeks
 
-1. **Harvest's free tier is the real benchmark.** Free forever, 1 seat, 2 projects. For a solo
-   freelancer that is a genuine competitor, not a trial. Any pricing argument must beat free.
-2. **gigstack is the most important competitor row.** Modern, developer-oriented Mexican CFDI
-   automation. It confirms the gap from the side most likely to close it, and it automates
-   invoicing *from payment events* — meaning it assumes something else already tracked the work.
-3. **The top risk is uncomfortable and belongs at the top of the risk map:** the gap most likely
-   closes from the Mexican side. A CFDI vendor adding a project table is a small step; a US
-   vendor implementing SAT/PAC integration is not.
-4. **CFDI requires a PAC.** This is why it is a regulatory moat rather than a formatting feature,
-   and it is the strongest single argument in the research.
-5. **Substitutes get equal weight.** The incumbent is a spreadsheet — free, familiar, already
-   open, and it never goes down.
+These have each been earned by a specific failure. Do not relax them.
 
----
-
-## ▶️ Next: Phase 3
-
-1. `lib/research/data.ts` — seed data typed and sourced, transcribed from `RESEARCH_FINDINGS.md`
-2. `app/research/page.tsx` — Server Component shell
-3. `BenchmarkCards` — 5 global examples, each showing source and verified date
-4. `MexicoPanel` — the CFDI requirement and its consequence, marked `reported`
-5. Add "Research" to the sidebar (a link only because it now leads somewhere — the rule has held since Week 0)
-6. **Deploy.** Ship as soon as it renders, consistent with Weeks 0–1
-7. Commit per phase
-
-Then Phase 4 (competitor table + client-side filter/search — this project's **first Client
-Component**), Phase 5 (risk map), Phase 6 (`research_records` + intake + save), Phase 7
-(dashboard widget), Phase 8 (tests).
-
----
-
-## Still outstanding for Brayden
-
-| Item | Notes |
+| Principle | Where it came from |
 |---|---|
-| **Human validation conversation** | 🔴 Hard requirement, cannot be produced or simulated. Script is in `PLAN.md` §7; a recording template will be provided |
-| Mexico tax spot-check | The six claims above |
-| Week 1 demo video, decision note, screenshots | Carried over |
-| Week 2 demo video, decision note, screenshots | Later |
+| **A deploy is not a configuration** | Week 0 served mock data for six deployments; Week 1 ran the wrong extractor for days. Both looked perfect |
+| **Every code path names itself** | `data-source`, `extractor`, `confidence`. The degraded path must announce itself |
+| **Verify production, not the config screen** | Adding a Vercel variable does not rebuild. Redeploy with cache off, then query production |
+| **A plausible number is not a fact** | Week 2. Cite it, date it, or mark it unverified |
+| **Instruction is not enforcement** | The prompt forbids inventing URLs; the code discards them anyway |
+| **Ship early** | Deploy as soon as the page renders. Three weeks, three early deploys, no last-hour scrambles |
+| **Audit prompts beat build prompts** | Every serious defect in this project was found by asking "is this actually done?" |
+| **Zero new dependencies unless earned** | Three weeks, one added package total (`@anthropic-ai/sdk`) |
 
 ---
 
-## Repository state
+## Architecture as it now stands
 
-- **30 commits**, clean tree, pushed to `origin/main`
-- Live: `/` and `/core` both HTTP 200, `/core` confirmed running the model
-- Week 2 code written so far: **none** — by design, Gate 1 first
+```
+app/
+  page.tsx            Dashboard — metrics, projects, research widget, core preview
+  core/page.tsx       Week 1 — brief → structured project
+  research/page.tsx   Week 2 — evidence, competitors, risk map, intake
+  api/core/{extract,save}
+  api/research/{extract,save}
+lib/
+  supabase.ts         Null-safe client — returns null, never throws
+  projects.ts         Week 0 data + fallback
+  core/               Week 1 extractor, prompt, heuristic, saved
+  research/           Week 2 data, extractor, prompt, heuristic, saved
+components/
+  research/CompetitorTable.tsx   ← the only Client Component in the project
+supabase/
+  schema.sql · core_outputs.sql · research_records.sql
+```
 
-### One incident worth remembering
+**Three tables, three modules, one design language.** Each week's module reuses the previous
+week's patterns rather than inventing new ones: the null-safe client from Week 0, the
+extractor-with-fallback from Week 1, the provenance columns throughout.
 
-The Week 2 Gate 1 commit accidentally reverted the Week 1 submission document, because the file
-was open in the editor with a stale buffer that overwrote the restructure, and `git add -A`
-staged it. Restored in commit `18e8cb5`.
+---
 
-**Two lessons:** stage explicit paths rather than `-A` when a file is known to be open elsewhere,
-and an editor buffer is a second writer competing with the working tree. It is the same shape as
-the last two weeks — the state you believe is live is not necessarily the state that is live.
+## ⚠️ Known state and gotchas
+
+- **`research_records` does not exist in the live database.** Run `supabase/research_records.sql`
+  in the SQL Editor. Until then the saved-records list renders empty (by design, not a crash) and
+  saving returns a 500 naming the missing table.
+- **`ANTHROPIC_API_KEY` is configured in Vercel** across all three environments. `/core` and
+  `/research` both confirmed running the model in production.
+- **Mexican tax claims are `reported`, not `verified`** — six specific claims listed in
+  `RESEARCH_FINDINGS.md` §3 need a human spot-check against SAT.
+- **The editor is a second writer.** A stale buffer silently reverted the Week 1 submission
+  document during Week 2. Stage explicit paths rather than `git add -A` when a file is open
+  elsewhere.
+- **zsh does not word-split unquoted expansions.** A `for u in $URLS` loop silently passes the
+  whole list as one argument. Use `while IFS= read -r`.
+
+---
+
+## For Week 3
+
+Nothing in the codebase blocks new work. The patterns to reuse:
+
+1. **Gate 1 first.** Write and commit the Build Discipline Packet before any code. It has caught
+   real contradictions three weeks running.
+2. **Deploy at roughly one third.** As soon as the required page renders anything, ship it. The
+   grade cap disappears and every later phase is upside.
+3. **Reuse, do not reinvent.** `getSupabaseClient()` is null-safe; the extractor pattern
+   generalises; `SourceBadge` and `ExtractorBadge` are the same idea applied to different
+   uncertainties.
+4. **Verify production explicitly** after anything environment-dependent. One check is not enough
+   during a rollout — the first post-deploy check in Week 1 hit an old instance and reported the
+   wrong answer.
+
+---
+
+## Outstanding for Brayden
+
+| Item | Week |
+|---|---|
+| 🔴 Human validation conversation | 2 — hard requirement, cannot be delegated |
+| 🟡 Run `research_records.sql` | 2 |
+| Mexico tax spot-check (6 claims) | 2 |
+| Demo video · Decision Note · screenshots | 1 and 2 |
+| Submission PDFs | 1 and 2 |
+
+Both weeks' submission documents are written and formatted consistently:
+`docs/week1/WEEK1_SUBMISSION_DOCUMENT.md` and `docs/week2/WEEK2_SUBMISSION_DOCUMENT.md`.

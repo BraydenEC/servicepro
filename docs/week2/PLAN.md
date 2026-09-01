@@ -235,7 +235,28 @@ Demo video · Human Decision Note · screenshots · final PDF.
 
 ---
 
-## 9. First question for you
+## 9. Decisions — confirmed
+
+| # | Decision | Confirmed |
+|---|---|---|
+| 1 | Intake calls Claude | **Yes** — reuses the Week 1 extractor and fallback |
+| 2 | Competitor data location | **Both** — curated seed in code, saved records in Supabase |
+| 3 | Risk map rendering | **CSS grid + inline SVG**, no chart library |
+| 4 | Competitor count | **10–12**, substitutes given equal weight |
+| 5 | Research sourcing | **I verify live with WebSearch/WebFetch and cite every claim; the student spot-checks the Mexico/CFDI tax claims before submission** |
+| 6 | Human validation conversation | Person not yet identified. Template and script prepared in advance; everything else proceeds without it |
+
+**On decision 5, one limitation stated plainly:** WebSearch is US-only, so Mexican-market
+coverage will be thinner than global coverage. For local vendors and SAT rules I will fetch
+pages directly rather than lean on search — and where a claim cannot be sourced, it ships marked
+`unverified` rather than with an invented citation. That is the schema doing its job.
+
+**On decision 6:** the conversation is a hard requirement and the only deliverable that cannot be
+produced, simulated, or drafted. Build proceeds around it; it cannot be dropped.
+
+---
+
+## 10. Original open question (resolved)
 
 **Decision 5 is the one that matters.** The strongest version of this week has real sources
 behind every claim. I can research and draft them, but you should verify the Mexico-specific

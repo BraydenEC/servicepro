@@ -270,9 +270,9 @@ export const RISKS: Risk[] = [
   {
     id: "cfdi-changes",
     title: "CFDI regulations change again",
-    likelihood: 2,
+    likelihood: 3,
     impact: 2,
-    note: "The 3.3 to 4.0 migration invalidated existing integrations once already. Building on the spec means inheriting its churn.",
+    note: "Raised from medium to high likelihood on 2026-09-01. The 3.3 to 4.0 migration invalidated existing integrations once, and the CFF reform effective January 2026 changed the rules again — this time adding an evidentiary obligation rather than a schema field. Building on the spec means inheriting its churn, and the churn is demonstrably ongoing.",
   },
   {
     id: "market-small",

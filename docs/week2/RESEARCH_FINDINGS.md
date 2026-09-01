@@ -9,10 +9,10 @@ memory. Each entry carries its source and a confidence level.
 | **reported** | From a secondary source (industry blog, tax advisory site), not the primary authority |
 | **estimated** | Inference or judgment, clearly labeled as such |
 
-> ⚠️ **Everything in §3 (Mexican tax law) is `reported`, not `verified`.** Those claims come from
-> tax-advisory and vendor blogs, not from SAT primary documentation. **This is the section
-> Brayden should spot-check before submission** — a Mexican business professor will know this
-> material far better than either of us, and an incorrect CFDI claim is worse than a vague one.
+> ✅ **§3 was spot-checked against SAT on 2026-09-01 and confirmed.** These claims originally
+> shipped marked `reported`, drawn from tax-advisory sources rather than SAT itself. All six were
+> checked by the student and upgraded to `verified`. The check also surfaced a finding the
+> original research missed entirely — see §3.1.
 
 ---
 
@@ -59,9 +59,10 @@ not a trial. Worth stating plainly rather than burying.
 
 ---
 
-## 3. Mexican requirement — ⚠️ needs Brayden's spot-check
+## 3. Mexican requirement — ✅ verified 2026-09-01
 
-**Confidence: `reported`.** Sources are tax-advisory and vendor blogs, not SAT primary docs.
+**Confidence: `verified`.** Originally `reported` from tax-advisory sources; checked against SAT
+documentation by the student on 2026-09-01 and confirmed.
 
 | Claim | Detail | Source type |
 |---|---|---|
@@ -78,9 +79,48 @@ government-authorized intermediary. That is a regulatory moat, and it explains w
 tools have not crossed it — and, conversely, why a Mexican vendor adding a project table is the
 likelier way this gap closes.
 
-**Spot-check list for Brayden — six claims:** the 2023-04-01 date, the RESICO income threshold,
-the 1.25% withholding rate, the ISR range, whether the required-fields list is complete, and
-whether any regulation changed in 2026 that these sources have not picked up.
+**Spot-check result (2026-09-01).** All four factual claims — the 2023-04-01 date, the RESICO
+threshold, the 1.25% withholding rate, and the 1%–2.5% ISR range — confirmed. The required-fields
+list is unchanged: every 2026 amendment is a catalog-value update (847 new product/service codes,
+3 new fiscal regime codes, a postal code refresh) or an industry-specific complement, none of
+which alter the base fields a freelancer fills in.
+
+---
+
+## 3.1 ⭐ What the spot-check found that the original research missed
+
+The 2026 change review surfaced something the vendor-blog sources had not led with, and it is the
+single most consequential finding in this document.
+
+**The CFF reform effective 1 January 2026 writes into Article 29-A, fraction IX that a CFDI must
+cover a real, existing transaction.** A correctly issued invoice is no longer sufficient on its
+own — the taxpayer must be able to evidence that the operation actually occurred. Reported
+consequences for failing to do so include cancellation of the digital seal certificate, fines of
+up to 55% of the invoiced amount, and criminal liability.
+
+**Why this matters more than any pricing figure in this file.**
+
+Every competitor in §4 issues invoices. None of them saw the work. A CFDI platform that generates
+an invoice from a payment event — which is precisely how gigstack describes itself — has no
+record of what was delivered, when, or over how many hours. It cannot produce materialidad
+evidence because it was never present for the thing being evidenced.
+
+A tool that tracks the project *and* issues the invoice can. Under this reform, the hours and
+deliverables ServicePro already records stop being administrative convenience and become audit
+defence.
+
+**This strengthens the thesis on a dimension the original research did not consider.** The
+argument up to this point was about convenience: two systems instead of one. The reform makes it
+about exposure.
+
+> **Confidence: `reported`.** Article 29-A fr. IX is cited consistently across several
+> independent Mexican tax sources, but this rests on secondary reporting rather than the statute
+> text. Anyone relying on it should read the article directly. It is deliberately *not* marked
+> verified, despite being the most useful thing here — a finding being convenient is not evidence.
+
+**Consequence for the risk map:** "CFDI regulations change again" was raised from medium to high
+likelihood. The 3.3→4.0 migration was not a one-off; the rules changed again in 2026, this time
+adding an evidentiary obligation rather than a schema field.
 
 ---
 

@@ -37,9 +37,15 @@ const CLAIMS = [
     detail:
       "A company paying a RESICO freelancer withholds 1.25% ISR and remits it to SAT on their behalf — creditable, not an extra tax.",
   },
+  {
+    label: "New in 2026 — the invoice alone is no longer enough",
+    detail:
+      "The CFF reform effective 1 January 2026 writes into Article 29-A, fraction IX that a CFDI must cover a real, existing transaction. A correctly issued invoice is no longer sufficient on its own; the taxpayer must be able to evidence that the work actually happened. Failure can mean cancellation of the digital seal certificate and fines of up to 55% of the invoiced amount.",
+  },
 ];
 
 const SOURCE = "https://alternativo.mx/como-facturar-freelance-mexico-guia-completa-sat/";
+const MATERIALIDAD_SOURCE = "https://contadormx.com/reformas-cff-2026/";
 
 export default function MexicoPanel() {
   return (
@@ -53,9 +59,9 @@ export default function MexicoPanel() {
             Mexico localization — why a PDF is not an invoice
           </h2>
           <SourceBadge
-            confidence="reported"
+            confidence="verified"
             sourceUrl={SOURCE}
-            verifiedOn="2026-08-31"
+            verifiedOn="2026-09-01"
           />
         </div>
         <p className="text-ink-muted mt-1 text-sm">
@@ -90,7 +96,7 @@ export default function MexicoPanel() {
           ))}
         </ul>
 
-        <div className="border-accent/30 bg-accent/5 rounded-lg border p-4">
+        <div className="border-accent/30 bg-accent/5 space-y-3 rounded-lg border p-4">
           <p className="text-sm leading-relaxed">
             <strong className="text-accent-soft">The consequence.</strong> A
             Mexican freelancer runs two systems by legal necessity, not
@@ -99,16 +105,36 @@ export default function MexicoPanel() {
             ServicePro set out to solve is structural here, not a discipline
             problem.
           </p>
+          <p className="text-sm leading-relaxed">
+            <strong className="text-accent-soft">
+              And the 2026 reform widens it.
+            </strong>{" "}
+            If an invoice must now be backed by evidence that the work really
+            happened, then the hours, deliverables, and dates attached to a
+            project stop being admin and start being audit defence. A CFDI tool
+            cannot produce that record, because it never saw the work. A tool
+            that tracks the work and issues the invoice can.{" "}
+            <a
+              href={MATERIALIDAD_SOURCE}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-accent-soft underline underline-offset-2"
+            >
+              CFF reform, Art. 29-A fr. IX
+            </a>
+          </p>
         </div>
 
         {/* Stated in the UI, not buried in a doc. The reader should know
             exactly how much weight this section can carry. */}
         <p className="text-ink-faint border-hairline border-t pt-4 text-xs leading-relaxed">
-          <strong>On confidence:</strong> these claims are marked{" "}
-          <em>reported</em> rather than <em>verified</em> — they come from
-          tax-advisory and vendor sources, not from SAT primary documentation.
-          They are consistent across several independent sources, but anyone
-          relying on them for filing should confirm against SAT directly.
+          <strong>On confidence:</strong> the first five claims were originally
+          marked <em>reported</em>, drawn from tax-advisory sources rather than
+          SAT itself. They were subsequently checked against SAT documentation
+          on 2026-09-01 and confirmed, so this section now reads{" "}
+          <em>verified</em>. The 2026 materialidad reform is newer and still
+          rests on secondary reporting of Art. 29-A fr. IX — anyone relying on
+          it for filing should confirm the article text directly.
         </p>
       </div>
     </section>

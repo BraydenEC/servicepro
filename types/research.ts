@@ -17,7 +17,7 @@ export const CONFIDENCE_LABEL: Record<Confidence, string> = {
 };
 
 export const CONFIDENCE_MEANING: Record<Confidence, string> = {
-  verified: "Fetched from the vendor's own page on the date shown",
+  verified: "Checked against the primary source on the date shown",
   reported: "From a secondary source, not the primary authority",
   estimated: "Informed judgment, not a sourced fact",
 };

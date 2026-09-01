@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
 import SourceBadge from "@/components/research/SourceBadge";
 import type { ResearchExtraction, ExtractorKind } from "@/lib/research/schema";
 import { CATEGORY_LABEL } from "@/types/research";
@@ -25,6 +26,20 @@ const EXAMPLE =
   "gigstack automates CFDI 4.0 invoicing from payment events and reconciles daily against SAT, but states it does not include project management or time tracking. https://gigstack.pro/";
 
 export default function ResearchIntake() {
+  /*
+    router.refresh() re-runs the Server Component that reads research_records,
+    so a saved record appears in the list below without a manual page reload.
+
+    This was a real bug, reported as "it only saves the most recent record".
+    The saves were persisting correctly the whole time and the list simply
+    never re-rendered — so from the outside, saving looked like it silently
+    failed. A save that works but shows nothing is indistinguishable from a
+    save that does not work, which is the same lesson as the invisible
+    fallbacks in Weeks 0 and 1: the user can only judge what the interface
+    shows them.
+  */
+  const router = useRouter();
+  const [isRefreshing, startRefresh] = useTransition();
   const [note, setNote] = useState("");
   const [result, setResult] = useState<Result | null>(null);
   const [busy, setBusy] = useState(false);
@@ -76,6 +91,8 @@ export default function ResearchIntake() {
         return;
       }
       setSaved(true);
+      // Pull the new record into the list below immediately.
+      startRefresh(() => router.refresh());
     } catch {
       setError("Could not reach the server.");
     } finally {
@@ -196,7 +213,9 @@ export default function ResearchIntake() {
               </button>
               {saved && (
                 <span className="text-ink-faint text-xs">
-                  Reload to see it in the list below.
+                  {isRefreshing
+                    ? "Updating the list…"
+                    : "Added to the list below."}
                 </span>
               )}
             </div>

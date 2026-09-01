@@ -1,5 +1,6 @@
 import CorePreview from "@/components/core/CorePreview";
 import ProjectsTable from "@/components/ProjectsTable";
+import ResearchWidget from "@/components/research/ResearchWidget";
 import Sidebar from "@/components/Sidebar";
 import SummaryCards from "@/components/SummaryCards";
 import { getSavedOutputs } from "@/lib/core/saved";
@@ -86,6 +87,7 @@ export default async function Home() {
 
             <SummaryCards metrics={metrics} />
             <ProjectsTable projects={projects} now={now} />
+            <ResearchWidget />
             <CorePreview outputs={savedOutputs} now={now} />
           </div>
         </div>

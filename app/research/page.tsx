@@ -1,7 +1,12 @@
 import BenchmarkCards from "@/components/research/BenchmarkCards";
+import CompetitorTable from "@/components/research/CompetitorTable";
 import MexicoPanel from "@/components/research/MexicoPanel";
+import ResearchIntake from "@/components/research/ResearchIntake";
+import RiskMap from "@/components/research/RiskMap";
+import SavedResearch from "@/components/research/SavedResearch";
 import Sidebar from "@/components/Sidebar";
-import { researchSummary } from "@/lib/research/data";
+import { PLAYERS, researchSummary } from "@/lib/research/data";
+import { getSavedResearch } from "@/lib/research/saved";
 
 /*
   /research — the Week 2 module.
@@ -22,6 +27,7 @@ export const metadata = {
 
 export default async function ResearchPage() {
   const summary = researchSummary();
+  const saved = await getSavedResearch();
 
   return (
     <div className="flex min-h-screen">
@@ -88,6 +94,15 @@ export default async function ResearchPage() {
 
             <BenchmarkCards />
             <MexicoPanel />
+
+            {/* PLAYERS is passed from the server to a Client Component. The
+                dataset is eleven rows, so shipping it once and filtering in
+                the browser beats a request per keystroke by a wide margin. */}
+            <CompetitorTable players={PLAYERS} />
+
+            <RiskMap />
+            <ResearchIntake />
+            <SavedResearch records={saved} />
           </div>
         </div>
       </main>

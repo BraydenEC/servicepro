@@ -84,7 +84,7 @@ Three divergences from the wireframe:
 | C12 | **Sources are real and reachable** | All cited URLs return 200 | ✅ **PASS (9/9)** |
 | C13 | Risk map plots every risk | Matches the risk list | ✅ PASS (6) |
 | C14 | Intake rejects empty input | 400, no write | ✅ PASS |
-| C15 | Save persists | Row present on re-query | ⏳ Needs migration |
+| C15 | Save persists | Row present on re-query | ✅ PASS (HTTP 201, verified 2026-09-01) |
 | C17 | Dashboard widget renders | Present, links to /research | ✅ PASS |
 | C18 | Works with no database | HTTP 200, seeded content | ✅ PASS |
 | C19 | Works with no model key | Falls back and says so | ✅ PASS |
@@ -152,9 +152,9 @@ Six software tests executed with raw output, plus the required human validation 
 | Architecture sketch | Data flow and components | ✅ 2 diagrams |
 | GitHub commits | Minimum 5 | ✅ **34** |
 | Vercel deployments | Minimum 2 | ✅ **12+** |
-| Supabase evidence | Table/data evidence | ⏳ Migration pending |
+| Supabase evidence | Table/data evidence | ✅ `research_records` live, round trip verified |
 | Prompt log | Minimum 5 | ✅ **6** |
-| Test evidence | Minimum 3 | ✅ **6** |
+| Test evidence | Minimum 3 | ✅ **8** |
 | Iteration log | What changed after testing | ✅ **10 entries** |
 | **Human validation conversation** | 1 real conversation | ⬅️ **OUTSTANDING** |
 | Demo video | 2–3 minutes | ⬅️ TO BE ADDED |

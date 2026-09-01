@@ -1,7 +1,7 @@
 # 🧪 Week 2 Test Evidence
 
 **Required:** 1 real human validation conversation + 3 software tests.
-**Delivered:** 6 software tests. The human conversation is outstanding — see §7.
+**Delivered:** 8 software tests. The human conversation is outstanding — see §7.
 
 **Live page:** https://servicepro-orpin.vercel.app/research
 
@@ -214,6 +214,56 @@ and cannot judge whether it supports the claim. The weaker path knows it is the 
 | Risk map cells | ✅ 9 cells |
 | Dashboard widget | ✅ "Market research" live |
 | Research API on production | ✅ `extractor: model`, `confidence: verified` |
+
+---
+
+## Test 7 — Save round trip, end to end ✅ PASS
+
+**Date:** 2026-09-01, after the migration was run against the live database.
+
+**Method** — POST a record to the production save route, then re-query the table directly.
+
+```
+POST https://servicepro-orpin.vercel.app/api/research/save
+→ {"id":"9ade39e7-afcf-49d2-89d8-2fd5fd930f68"}   HTTP 201
+```
+
+**Row as persisted**
+```json
+{
+  "title": "Save round trip verification",
+  "confidence": "verified",
+  "source_url": "https://github.com/BraydenEC/servicepro",
+  "extractor": "heuristic",
+  "prompt_version": "v1.0.0",
+  "verified_on": "2026-09-01"
+}
+```
+
+`verified_on` was stamped by the server, and both provenance columns persisted. **Verdict: PASS** —
+criterion C15 is now satisfied.
+
+---
+
+## Test 8 — The database enforces the honesty rule itself ✅ PASS
+
+**Why separately.** Test 5 proved the *API route* refuses a `verified` claim with no source. That
+only protects writes going through the route. The constraint matters more if it holds regardless
+of which client writes.
+
+**Method** — bypass the application entirely and insert directly through PostgREST with the anon
+key:
+
+```bash
+curl -X POST .../rest/v1/research_records \
+  -d '{"confidence":"verified","source_url":null, ...}'
+```
+
+**Result: HTTP 400** — rejected by the `verified_requires_source` CHECK constraint in Postgres.
+
+**Verdict: PASS.** The rule survives the application being bypassed. All four anti-fabrication
+layers are now individually verified: the prompt (Test 4), the code that discards unsupported
+URLs (Test 4), the API route (Test 5), and the database (Test 8).
 
 ---
 

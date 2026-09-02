@@ -150,8 +150,8 @@ Six software tests executed with raw output, plus the required human validation 
 | UX mockup | Image or wireframe | ✅ `wireframe.svg` + implementation note |
 | Product spec | Requirements + acceptance criteria | ✅ 19 testable criteria |
 | Architecture sketch | Data flow and components | ✅ 2 diagrams |
-| GitHub commits | Minimum 5 | ✅ **34** |
-| Vercel deployments | Minimum 2 | ✅ **12+** |
+| GitHub commits | Minimum 5 | ✅ **38** |
+| Vercel deployments | Minimum 2 | ✅ **15+** |
 | Supabase evidence | Table/data evidence | ✅ `research_records` live, round trip verified |
 | Prompt log | Minimum 5 | ✅ **6** |
 | Test evidence | Minimum 3 | ✅ **8** |
@@ -225,4 +225,4 @@ The source-resolution check first reported every citation broken. The data was f
 5. Intake form with a structured result and its confidence badge
 6. Supabase — `research_records` with saved rows
 7. Dashboard — "Market research" widget
-8. GitHub commit history (34 commits)
+8. GitHub commit history (38 commits)
